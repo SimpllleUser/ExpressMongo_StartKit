@@ -1,9 +1,12 @@
 const db = require("../models");
 const Task = db.tasks;
 
+
+
 // Create and Save a new Task
 exports.create = (req, res) => {
     // Validate request
+
     if (!req.body.title) {
         res.status(400).send({ message: "Content can not be empty!" });
         return;
@@ -14,7 +17,7 @@ exports.create = (req, res) => {
         title: req.body.title,
         description: req.body.description,
         status: req.body.status,
-        type: req.body.type
+        priority: req.body.priority
             // published: req.body.published ? req.body.published : false
     });
 
