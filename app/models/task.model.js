@@ -2,8 +2,8 @@ module.exports = mongoose => {
     var schema = mongoose.Schema({
         title: String,
         description: String,
-        type: String,
-        status: String
+        status: String,
+        type: String
     }, { timestamps: true });
 
     schema.method("toJSON", function() {
