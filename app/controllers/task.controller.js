@@ -1,7 +1,7 @@
 const db = require("../models");
-const Tutorial = db.tutorials;
+const Task = db.tasks;
 
-// Create and Save a new Tutorial
+// Create and Save a new Task
 exports.create = (req, res) => {
   // Validate request
   if (!req.body.title) {
@@ -9,62 +9,62 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a Tutorial
-  const tutorial = new Tutorial({
+  // Create a Task
+  const task = new Task({
     title: req.body.title,
     description: req.body.description,
-    published: req.body.published ? req.body.published : false
+    // published: req.body.published ? req.body.published : false
   });
 
-  // Save Tutorial in the database
-  tutorial
-    .save(tutorial)
+  // Save Task in the database
+  task
+    .save(task)
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Tutorial."
+          err.message || "Some error occurred while creating the Task."
       });
     });
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all Tasks from the database.
 exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
 
-  Tutorial.find(condition)
+  Task.find(condition)
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving tasks."
       });
     });
 };
 
-// Find a single Tutorial with an id
+// Find a single Task with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Tutorial.findById(id)
+  Task.findById(id)
     .then(data => {
       if (!data)
-        res.status(404).send({ message: "Not found Tutorial with id " + id });
+        res.status(404).send({ message: "Not found Task with id " + id });
       else res.send(data);
     })
     .catch(err => {
       res
         .status(500)
-        .send({ message: "Error retrieving Tutorial with id=" + id });
+        .send({ message: "Error retrieving Task with id=" + id });
     });
 };
 
-// Update a Tutorial by the id in the request
+// Update a Task by the id in the request
 exports.update = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
@@ -74,70 +74,70 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  Tutorial.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  Task.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot update Task with id=${id}. Maybe Task was not found!`
         });
-      } else res.send({ message: "Tutorial was updated successfully." });
+      } else res.send({ message: "Task was updated successfully." });
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Tutorial with id=" + id
+        message: "Error updating Task with id=" + id
       });
     });
 };
 
-// Delete a Tutorial with the specified id in the request
+// Delete a Task with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Tutorial.findByIdAndRemove(id, { useFindAndModify: false })
+  Task.findByIdAndRemove(id, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot delete Task with id=${id}. Maybe Task was not found!`
         });
       } else {
         res.send({
-          message: "Tutorial was deleted successfully!"
+          message: "Task was deleted successfully!"
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Tutorial with id=" + id
+        message: "Could not delete Task with id=" + id
       });
     });
 };
 
-// Delete all Tutorials from the database.
+// Delete all Tasks from the database.
 exports.deleteAll = (req, res) => {
-  Tutorial.deleteMany({})
+  Task.deleteMany({})
     .then(data => {
       res.send({
-        message: `${data.deletedCount} Tutorials were deleted successfully!`
+        message: `${data.deletedCount} Tasks were deleted successfully!`
       });
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all tutorials."
+          err.message || "Some error occurred while removing all tasks."
       });
     });
 };
 
-// Find all published Tutorials
+// Find all published Tasks
 exports.findAllPublished = (req, res) => {
-  Tutorial.find({ published: true })
+  Task.find({ published: true })
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving tasks."
       });
     });
 };
