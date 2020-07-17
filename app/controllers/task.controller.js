@@ -92,22 +92,25 @@ exports.update = (req, res) => {
 // Delete a Task with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
-
+    console.log('id', id)
     Task.findByIdAndRemove(id, { useFindAndModify: false })
         .then(data => {
             if (!data) {
                 res.status(404).send({
-                    message: `Cannot delete Task with id=${id}. Maybe Task was not found!`
+                    message: `Cannot delete Task with id=${id}. Maybe Task was not found!`,
+                    status: false
                 });
             } else {
                 res.send({
-                    message: "Task was deleted successfully!"
+                    message: "Task was deleted successfully!",
+                    status: true
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Task with id=" + id
+                message: "Could not delete Task with id=" + id,
+                status: false
             });
         });
 };
