@@ -7,5 +7,6 @@ const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
 db.tasks = require("./task.model.js")(mongoose);
+db.calendar_events = require("./calendar.model.js")(mongoose);
 
 module.exports = db;

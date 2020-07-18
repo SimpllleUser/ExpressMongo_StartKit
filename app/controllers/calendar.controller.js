@@ -1,7 +1,8 @@
 const db = require("../models");
-const Task = db.tasks;
+const CalendarEvent = db.calendar_events;
 
-// Create and Save a new Task
+
+
 exports.create = (req, res) => {
     // Validate request
     if (!req.body.title) {
@@ -9,34 +10,32 @@ exports.create = (req, res) => {
         return;
     }
 
-    // Create a Task
-    const task = new Task({
+    // Create a CalendarEvent
+    const calendarEvent = new CalendarEvent({
         title: req.body.title,
-        description: req.body.description,
-        status: req.body.status,
-        priority: req.body.priority
+        date: req.body.date
             // published: req.body.published ? req.body.published : false
     });
 
-    // Save Task in the database
-    task
-        .save(task)
+    // Save CalendarEvent in the database
+    calendarEvent
+        .save(calendarEvent)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Task."
+                message: err.message || "Some error occurred while creating the CalendarEvent."
             });
         });
 };
 
-// Retrieve all Tasks from the database.
+// Retrieve all CalendarEvents from the database.
 exports.findAll = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
 
-    Task.find(condition)
+    CalendarEvent.find(condition)
         .then(data => {
             res.send(data);
         })
@@ -47,24 +46,24 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Find a single Task with an id
+// Find a single CalendarEvent with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Task.findById(id)
+    CalendarEvent.findById(id)
         .then(data => {
             if (!data)
-                res.status(404).send({ message: "Not found Task with id " + id });
+                res.status(404).send({ message: "Not found CalendarEvent with id " + id });
             else res.send(data);
         })
         .catch(err => {
             res
                 .status(500)
-                .send({ message: "Error retrieving Task with id=" + id });
+                .send({ message: "Error retrieving CalendarEvent with id=" + id });
         });
 };
 
-// Update a Task by the id in the request
+// Update a CalendarEvent by the id in the request
 exports.update = (req, res) => {
     if (!req.body) {
         return res.status(400).send({
@@ -74,52 +73,52 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
-    Task.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    CalendarEvent.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
             if (!data) {
                 res.status(404).send({
-                    message: `Cannot update Task with id=${id}. Maybe Task was not found!`
+                    message: `Cannot update CalendarEvent with id=${id}. Maybe CalendarEvent was not found!`
                 });
-            } else res.send({ message: "Task was updated successfully." });
+            } else res.send({ message: "CalendarEvent was updated successfully." });
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Task with id=" + id
+                message: "Error updating CalendarEvent with id=" + id
             });
         });
 };
 
-// Delete a Task with the specified id in the request
+// Delete a CalendarEvent with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
-    Task.findByIdAndRemove(id, { useFindAndModify: false })
+    CalendarEvent.findByIdAndRemove(id, { useFindAndModify: false })
         .then(data => {
             if (!data) {
                 res.status(404).send({
-                    message: `Cannot delete Task with id=${id}. Maybe Task was not found!`,
+                    message: `Cannot delete CalendarEvent with id=${id}. Maybe CalendarEvent was not found!`,
                     status: false
                 });
             } else {
                 res.send({
-                    message: "Task was deleted successfully!",
+                    message: "CalendarEvent was deleted successfully!",
                     status: true
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Task with id=" + id,
+                message: "Could not delete CalendarEvent with id=" + id,
                 status: false
             });
         });
 };
 
-// Delete all Tasks from the database.
+// Delete all CalendarEvents from the database.
 exports.deleteAll = (req, res) => {
-    Task.deleteMany({})
+    CalendarEvent.deleteMany({})
         .then(data => {
             res.send({
-                message: `${data.deletedCount} Tasks were deleted successfully!`
+                message: `${data.deletedCount} CalendarEvents were deleted successfully!`
             });
         })
         .catch(err => {
@@ -129,9 +128,9 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// Find all published Tasks
+// Find all published CalendarEvents
 exports.findAllPublished = (req, res) => {
-    Task.find({ published: true })
+    CalendarEvent.find({ published: true })
         .then(data => {
             res.send(data);
         })

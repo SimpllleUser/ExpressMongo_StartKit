@@ -36,6 +36,7 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/task.routes")(app);
+require("./app/routes/calendar.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
