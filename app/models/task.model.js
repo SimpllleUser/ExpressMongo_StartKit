@@ -3,7 +3,8 @@ module.exports = mongoose => {
         title: String,
         description: String,
         status: String,
-        priority: String
+        priority: String,
+        date: String
     }, { timestamps: true });
 
     schema.method("toJSON", function() {

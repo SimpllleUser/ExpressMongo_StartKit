@@ -14,7 +14,8 @@ exports.create = (req, res) => {
         title: req.body.title,
         description: req.body.description,
         status: req.body.status,
-        priority: req.body.priority
+        priority: req.body.priority,
+        date: req.body.date
             // published: req.body.published ? req.body.published : false
     });
 
