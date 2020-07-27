@@ -13,6 +13,7 @@ exports.create = (req, res) => {
     // Create a CalendarEvent
     const calendarEvent = new CalendarEvent({
         title: req.body.title,
+        description: req.body.description,
         date: req.body.date
             // published: req.body.published ? req.body.published : false
     });
