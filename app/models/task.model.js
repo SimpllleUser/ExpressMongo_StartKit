@@ -4,6 +4,9 @@ module.exports = mongoose => {
         description: String,
         status: String,
         priority: String,
+        type: String,
+        workLog: Number,
+        estimate: Number,
         date: String
     }, { timestamps: true });
 

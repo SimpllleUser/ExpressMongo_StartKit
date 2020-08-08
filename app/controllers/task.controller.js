@@ -17,7 +17,10 @@ exports.create = (req, res) => {
         title: req.body.title,
         description: req.body.description,
         status: req.body.status,
+        type: req.body.type,
         priority: req.body.priority,
+        workLog: 0,
+        estimate: req.body.estimate,
         date: req.body.date
             // published: req.body.published ? req.body.published : false
     });
