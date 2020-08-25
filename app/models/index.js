@@ -10,7 +10,7 @@ db.tasks = require("./task.model.js")(mongoose);
 db.calendar_events = require("./calendar.model.js")(mongoose);
 
 db.user = require("./user.model")
-db.user = require("./role.model")
+db.role = require("./role.model")
 
 db.ROLE = ["user", "admin", "moderator"]
 
