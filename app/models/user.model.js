@@ -1,5 +1,4 @@
-const mongoose = require("mongoose")
-
+const mongoose = require("mongoose");
 const User = mongoose.model(
     "User",
     new mongoose.Schema({
@@ -11,6 +10,6 @@ const User = mongoose.model(
             ref: "Role"
         }]
     })
-)
+);
 
-module.exports = User
+module.exports = User;
