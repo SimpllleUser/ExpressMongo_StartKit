@@ -47,7 +47,6 @@ exports.signup = (req, res) => {
                     return;
                 }
 
-                user.roles = [role._id];
                 user.save(async err => {
                     if (err) {
                         res.status(500).send({ message: err });
@@ -59,7 +58,6 @@ exports.signup = (req, res) => {
                     const user_auth = await User.findOne({
                         username: req.body.username
                     })
-
 
                     res.send({
                         message: "User was registered successfully!",
@@ -110,6 +108,7 @@ exports.signin = (req, res) => {
             for (let i = 0; i < user.roles.length; i++) {
                 authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
             }
+
             res.status(200).send({
                 id: user._id,
                 username: user.username,
