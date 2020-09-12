@@ -48,13 +48,26 @@ exports.signup = (req, res) => {
                 }
 
                 user.roles = [role._id];
-                user.save(err => {
+                user.save(async err => {
                     if (err) {
                         res.status(500).send({ message: err });
                         return;
                     }
+                    var token = jwt.sign({ id: user.id }, config.secret, {
+                        expiresIn: 86400 // 24 hours
+                    });
+                    const user_auth = await User.findOne({
+                        username: req.body.username
+                    })
 
-                    res.send({ message: "User was registered successfully!" });
+
+                    res.send({
+                        message: "User was registered successfully!",
+                        accessToken: token,
+                        id: user_auth._id,
+                        username: user_auth.username,
+                        email: user_auth.email,
+                    });
                 });
             });
         }
