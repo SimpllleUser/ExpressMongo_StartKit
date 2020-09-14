@@ -36,7 +36,7 @@ exports.signup = (req, res) => {
                             return;
                         }
 
-                        res.send({ message: "User was registered successfully!" });
+                        res.send({ message: "User was registered successfully!", allow: true });
                     });
                 }
             );
@@ -61,10 +61,7 @@ exports.signup = (req, res) => {
 
                     res.send({
                         message: "User was registered successfully!",
-                        accessToken: token,
-                        id: user_auth._id,
-                        username: user_auth.username,
-                        email: user_auth.email,
+                        allow: true
                     });
                 });
             });
