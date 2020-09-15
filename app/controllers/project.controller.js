@@ -33,6 +33,7 @@ exports.creaet = (req, res) => {
 exports.findAll = (req, res) => {
     const { title, description } = req.body
     var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+
     Project.find(condition)
         .then(data => {
             res.send(data);
