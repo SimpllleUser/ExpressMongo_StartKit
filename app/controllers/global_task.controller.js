@@ -6,12 +6,9 @@ const GlobalTask = db.global_task
 
 exports.create = (req, res) => {
     const { title, description } = req.body
-
-
     if (!title) {
         return res.status(400).send({ message: "Content can not be empty!" })
     }
-
 
     const global_task = new GlobalTask({
         title,

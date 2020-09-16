@@ -2,7 +2,7 @@ const { project } = require("../models")
 const db = require("../models")
 
 const Project = db.project
-
+const GlobalTask = db.global_task
 exports.creaet = (req, res) => {
     const { title, description } = req.body
 
@@ -99,3 +99,43 @@ exports.delete = (req, res) => {
             })
         })
 };
+
+exports.createGlobalTask = async(req, res) => {
+
+    const { id, global_task } = req.body
+
+    if (!id && !global_task) {
+        return res.status(400).send({ message: "Content can not be empty!" })
+    }
+
+    const newGobal_task = new GlobalTask({
+        title: global_task.title,
+        description: global_task.description
+    })
+    try {
+        const response = await newGobal_task.save(newGobal_task)
+        const result_create = await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: response._id.toString() } }, { useFindAndModify: false })
+        res.send(result_create)
+    } catch (err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while creating the GlobalTask."
+        });
+    }
+}
+
+exports.deleteGlobalTask = async(req, res) => {
+    const { id, global_taskId } = req.body
+
+    if (!id && !global_taskId) {
+        return res.status(400).send({ message: "Content can not find!" })
+    }
+
+    try {
+        await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: global_taskId } }, { useFindAndModify: false })
+        await GlobalTask.findByIdAndRemove(task_id, { useFindAndModify: false })
+            // TODO Добавить подобній функционал для task.controller
+        res.send({ message: "Delete success" });
+    } catch (err) {
+        res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
+    }
+}

@@ -10,8 +10,3 @@ const GlobalTask = mongoose.model(
 );
 
 module.exports = GlobalTask;
-
-// {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "Task"
-// }

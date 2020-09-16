@@ -5,6 +5,7 @@ const Project = mongoose.model(
     new mongoose.Schema({
         title: String,
         description: String,
+        global_tasks: []
     }, { timestamps: true })
 );
 
