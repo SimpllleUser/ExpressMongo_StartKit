@@ -13,7 +13,7 @@ module.exports = app => {
     router.get("/published", tasks.findAllPublished);
 
     // Retrieve a single Task with id
-    router.get("/:id", tasks.findOne);
+    router.get("/id=:id", tasks.findOne);
 
     // Update a Task with id
     router.put("/:id", tasks.update);
@@ -26,6 +26,9 @@ module.exports = app => {
 
     // Create a new Task
     router.delete("/", tasks.deleteAll);
+
+    router.get("/global-task", tasks.findGlobalTask);
+
 
     app.use("/api/tasks", router);
 };

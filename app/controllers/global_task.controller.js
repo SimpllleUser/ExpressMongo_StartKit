@@ -1,6 +1,7 @@
 const { global_task } = require("../models")
 const db = require("../models")
 
+const Task = db.tasks
 const GlobalTask = db.global_task
 
 exports.create = (req, res) => {
@@ -77,15 +78,30 @@ exports.update = (req, res) => {
         })
 }
 
-exports.createTask = (req, res) => {
+exports.addTask = (req, res) => {
 
     if (!req.body) { return res.status(404).send({ message: "Data to update can not be empty!" }) }
 
-    const { id, task } = req.body
+    const { id, task_id } = req.body
 
-    GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: task } })
+    GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: task_id } })
         .then(data => {
             res.send(data)
         })
         .catch(err => console.log("ERR => ", err))
+}
+
+exports.getTasks = async(req, res) => {
+    try {
+        const test = "5f608fbe685ba90df44e66f4"
+        const globalTask = await GlobalTask.findById(test)
+        const tasksId = globalTask.tasks;
+
+        const tasks = await Task.find({
+            '_id': { $in: tasksId }
+        });
+        return res.send(tasks);
+    } catch (err) {
+        res.status(404).send({ message: err })
+    }
 }

@@ -1,5 +1,6 @@
 const db = require("../models");
 const Task = db.tasks;
+const GlobalTask = db.global_task
 
 
 
@@ -148,3 +149,10 @@ exports.findAllPublished = (req, res) => {
             });
         });
 };
+exports.findGlobalTask = async(req, res) => {
+    const id = req.body.id;
+    const response = await GlobalTask.findById(id)
+    return res.send(response);
+}
+
+// 5f608fbe685ba90df44e66f4
