@@ -7,6 +7,8 @@ module.exports = app => {
         // router.get('/:id', global_task.findOne)
     router.post('/addTask', global_task.addTask)
     router.get('/tasks', global_task.getTasks)
+    router.delete('/delete_task', global_task.deleteTask)
+
 
     // router.put('/:id', project.update)
     // router.delete('/:id', project.delete)

@@ -151,8 +151,11 @@ exports.findAllPublished = (req, res) => {
 };
 exports.findGlobalTask = async(req, res) => {
     const id = req.body.id;
-    const response = await GlobalTask.findById(id)
-    return res.send(response);
-}
+    try {
+        const globalTask = await GlobalTask.findById(id)
+        return res.send(globalTask);
+    } catch (err) {
+        res.status(404).send({ message: err || "Not found Global_task with id" })
+    }
 
-// 5f608fbe685ba90df44e66f4
+}

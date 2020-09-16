@@ -78,30 +78,44 @@ exports.update = (req, res) => {
         })
 }
 
-exports.addTask = (req, res) => {
+exports.addTask = async(req, res) => {
 
     if (!req.body) { return res.status(404).send({ message: "Data to update can not be empty!" }) }
 
     const { id, task_id } = req.body
 
-    GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: task_id } })
-        .then(data => {
-            res.send(data)
-        })
-        .catch(err => console.log("ERR => ", err))
+    try {
+        await GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: task_id } }, { useFindAndModify: false })
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Error with add task" });
+    }
 }
 
 exports.getTasks = async(req, res) => {
     try {
-        const test = "5f608fbe685ba90df44e66f4"
-        const globalTask = await GlobalTask.findById(test)
-        const tasksId = globalTask.tasks;
+        const id = req.body.id
+        const globalTask = await GlobalTask.findById(id)
+        const tasks_Id = globalTask.tasks;
 
         const tasks = await Task.find({
-            '_id': { $in: tasksId }
+            '_id': { $in: tasks_Id }
         });
-        return res.send(tasks);
+        res.send(tasks);
     } catch (err) {
         res.status(404).send({ message: err })
+    }
+}
+
+exports.deleteTask = async(req, res) => {
+
+    const { id, task_id } = req.body
+
+    try {
+        await GlobalTask.findByIdAndUpdate({ _id: id }, { $pull: { tasks: task_id } }, { useFindAndModify: false })
+        await Task.findByIdAndRemove(task_id, { useFindAndModify: false })
+            // TODO Добавить подобній функционал для task.controller
+        res.send({ message: "Delete success" });
+    } catch (err) {
+        res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
     }
 }
