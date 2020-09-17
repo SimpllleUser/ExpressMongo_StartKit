@@ -45,19 +45,34 @@ exports.findAll = (req, res) => {
 
 }
 
-exports.findOne = (req, res) => {
+exports.findOne = async(req, res) => {
     const id = req.params.id
-    Project.findById(id)
-        .then(data => {
-            if (data) {
-                res.send(data)
-            } else {
-                res.status(404).send({ message: "Not found Task with id " + id })
-            }
-        })
-        .catch(err => {
-            res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
-        })
+
+    if (!id) {
+        return res.status(404).send({ message: "Not found Proejct with" + id });
+    }
+
+    try {
+        const project = await Project.findById(id)
+        const global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
+        project.global_tasks = global_tasks
+        res.send(project);
+    } catch (err) {
+        res.send({ message: err.message || "Some err with get project" });
+    }
+
+
+    //     .then(data => {
+    //             if (data) {
+    //                 res.send(data)
+    //             } else {
+    //                 res.status(404).send({ message: "Not found Task with id " + id })
+    //             }
+    //         })
+    //         .catch(err => {
+    //             res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
+    //         })
+    // }
 }
 
 exports.update = (req, res) => {
@@ -135,7 +150,6 @@ exports.deleteGlobalTask = async(req, res) => {
     try {
         await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
         await GlobalTask.findByIdAndRemove(global_taskId, { useFindAndModify: false })
-            // TODO Добавить подобній функционал для task.controller
         res.send({ message: "Delete success" });
     } catch (err) {
         res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })

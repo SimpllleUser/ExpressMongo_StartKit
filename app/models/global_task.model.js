@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const GlobalTask = mongoose.model(
     "GlobalTask",
     new mongoose.Schema({
-        name: String,
+        title: String,
         description: String,
         tasks: []
     })
