@@ -142,7 +142,6 @@ exports.createGlobalTask = async(req, res) => {
 
 exports.deleteGlobalTask = async(req, res) => {
     const { id, global_taskId } = req.body
-
     if (!id && !global_taskId) {
         return res.status(400).send({ message: "Content can not find!" })
     }
