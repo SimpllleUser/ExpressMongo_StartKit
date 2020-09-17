@@ -1,4 +1,5 @@
 const { project } = require("../models")
+const { Types } = require('mongoose')
 const db = require("../models")
 
 const Project = db.project
@@ -113,8 +114,9 @@ exports.createGlobalTask = async(req, res) => {
         description: global_task.description
     })
     try {
+        // .toString()
         const response = await newGobal_task.save(newGobal_task)
-        const result_create = await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: response._id.toString() } }, { useFindAndModify: false })
+        const result_create = await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: response._id } }, { useFindAndModify: false })
         res.send(result_create)
     } catch (err) {
         res.status(500).send({
@@ -131,7 +133,7 @@ exports.deleteGlobalTask = async(req, res) => {
     }
 
     try {
-        await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: global_taskId } }, { useFindAndModify: false })
+        await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
         await GlobalTask.findByIdAndRemove(task_id, { useFindAndModify: false })
             // TODO Добавить подобній функционал для task.controller
         res.send({ message: "Delete success" });
