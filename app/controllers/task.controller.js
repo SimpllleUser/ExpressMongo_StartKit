@@ -1,5 +1,6 @@
 const db = require("../models");
 const Task = db.tasks;
+const GlobalTask = db.global_task
 
 
 
@@ -148,3 +149,13 @@ exports.findAllPublished = (req, res) => {
             });
         });
 };
+exports.findGlobalTask = async(req, res) => {
+    const id = req.body.id;
+    try {
+        const globalTask = await GlobalTask.findById(id)
+        return res.send(globalTask);
+    } catch (err) {
+        res.status(404).send({ message: err || "Not found Global_task with id" })
+    }
+
+}
