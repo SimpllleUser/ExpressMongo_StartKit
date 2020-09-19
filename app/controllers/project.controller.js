@@ -124,15 +124,17 @@ exports.createGlobalTask = async(req, res) => {
         return res.status(400).send({ message: "Content can not be empty!" })
     }
 
+    console.log('id, global_task', id, global_task)
     const newGobal_task = new GlobalTask({
         title: global_task.title,
         description: global_task.description
     })
     try {
         // .toString()
-        const response = await newGobal_task.save(newGobal_task)
-        const result_create = await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: response._id } }, { useFindAndModify: false })
-        res.send(result_create)
+        const newGlobalTask = await newGobal_task.save(newGobal_task)
+        await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: newGlobalTask._id } }, { useFindAndModify: false })
+        console.log(newGlobalTask)
+        res.send(newGlobalTask)
     } catch (err) {
         res.status(500).send({
             message: err.message || "Some error occurred while creating the GlobalTask."
@@ -149,6 +151,7 @@ exports.deleteGlobalTask = async(req, res) => {
     try {
         await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
         await GlobalTask.findByIdAndRemove(global_taskId, { useFindAndModify: false })
+        console.log(id, global_taskId)
         res.send({ message: "Delete success" });
     } catch (err) {
         res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })

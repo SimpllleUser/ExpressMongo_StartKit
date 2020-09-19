@@ -1,12 +1,17 @@
-const mongoose = require("mongoose");
-
-const GlobalTask = mongoose.model(
-    "GlobalTask",
-    new mongoose.Schema({
+module.exports = mongoose => {
+    var schema = mongoose.Schema({
         title: String,
         description: String,
         tasks: []
-    })
-);
+    }, { timestamps: true });
 
-module.exports = GlobalTask;
+
+    schema.method("toJSON", function() {
+        const { __v, _id, ...object } = this.toObject();
+        object.id = _id;
+        return object;
+    });
+
+    const GlobalTask = mongoose.model("global_task", schema);
+    return GlobalTask;
+};
