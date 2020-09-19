@@ -9,7 +9,7 @@ db.url = dbConfig.url;
 db.tasks = require("./task.model.js")(mongoose)
 db.calendar_events = require("./calendar.model.js")(mongoose)
 db.project = require("./project.model")(mongoose)
-db.user = require("./user.model")(mongoose)
+db.user = require("./user.model")
 db.role = require("./role.model")
 db.global_task = require("./global_task.model")(mongoose)
 
