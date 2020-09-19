@@ -54,9 +54,11 @@ exports.findOne = async(req, res) => {
 
     try {
         const project = await Project.findById(id)
-        const global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
+        let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
+        global_tasks = JSON.parse(JSON.stringify(global_tasks).replace(/_id/gi, 'id')) // Замена _id на id
         project.global_tasks = global_tasks
         res.send(project);
+
     } catch (err) {
         res.send({ message: err.message || "Some err with get project" });
     }
