@@ -159,3 +159,30 @@ exports.findGlobalTask = async(req, res) => {
     }
 
 }
+
+exports.createInGlobal_task = async(req, res) => {
+    console.log(req.body)
+    const { title, description } = req.body.task
+    const id = "5f666813074efd0f48afcbbc"
+        //req.body.id
+    if (!title && !description) {
+        return res.status(400).send({ message: "Content can not be empty!" });
+    }
+
+    const task = new Task({
+        title: req.body.title,
+        description: req.body.description,
+        status: req.body.status,
+        type: req.body.type,
+        priority: req.body.priority,
+        workLog: 0,
+        estimate: req.body.estimate,
+        date: req.body.date
+    });
+    const result = await task.save(task)
+    await GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: result._id } }, { useFindAndModify: false })
+
+    console.log('res', result)
+    return res.send(result)
+
+}
