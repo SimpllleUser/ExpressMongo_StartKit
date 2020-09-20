@@ -153,7 +153,6 @@ exports.deleteGlobalTask = async(req, res) => {
     try {
         await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
         await GlobalTask.findByIdAndRemove(global_taskId, { useFindAndModify: false })
-        console.log(id, global_taskId)
         res.send({ message: "Delete success" });
     } catch (err) {
         res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })

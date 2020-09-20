@@ -43,19 +43,25 @@ exports.findAll = (req, res) => {
 
 }
 
-exports.findOne = (req, res) => {
+exports.findOne = async(req, res) => {
     const id = req.params.id
     GlobalTask.findById(id)
-        .then(data => {
-            if (data) {
-                res.send(data)
-            } else {
-                res.status(404).send({ message: "Not found Global_task with id " + id })
-            }
-        })
-        .catch(err => {
-            res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
-        })
+        // .then(data => {
+        //     if (data) {
+
+    //     } else {
+    //         res.status(404).send({ message: "Not found Global_task with id " + id })
+    //     }
+    // })
+    // .catch(err => {
+    //     res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
+    // })
+
+    const global_task = await Project.findById(id)
+    let tasks = await GlobalTask.find({ '_id': { $in: global_task.tasks } })
+    tasks = JSON.parse(JSON.stringify(tasks).replace(/_id/gi, 'id')) // Замена _id на id
+    global_task.tasks = tasks
+    res.send(global_task)
 }
 
 
