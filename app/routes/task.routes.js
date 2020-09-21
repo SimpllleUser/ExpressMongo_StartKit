@@ -12,7 +12,7 @@ module.exports = app => {
     router.get("/global-task", tasks.findGlobalTask);
 
     router.post("/create/in_global-task", tasks.createInGlobal_task);
-    router.post("/delete/in_global-task", tasks.deleteInGlobal_task);
+    router.delete("/delete/in_global-task", tasks.deleteInGlobal_task);
 
     app.use("/api/tasks", router);
 };

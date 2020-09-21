@@ -2,6 +2,7 @@ const db = require("../models");
 const Task = db.tasks;
 const GlobalTask = db.global_task
 
+const { Types } = require('mongoose')
 
 
 // Create and Save a new Task
@@ -161,9 +162,11 @@ exports.findGlobalTask = async(req, res) => {
 }
 
 exports.createInGlobal_task = async(req, res) => {
+    const id = req.body.id
+
     const { title, description, status, type, priority, workLog, estimate, date } = req.body.task
-    const id = "5f666813074efd0f48afcbbc"
-        //req.body.id
+
+    //req.body.id
     if (!title && !description) {
         return res.status(400).send({ message: "Content can not be empty!" });
     }
@@ -191,12 +194,13 @@ exports.createInGlobal_task = async(req, res) => {
 
 exports.deleteInGlobal_task = async(req, res) => {
     const { id, taskId } = req.body
-    if (!title && !description) {
+    if (!id && !taskId) {
         return res.status(400).send({ message: "Content can not be empty!" });
     }
     try {
         await GlobalTask.findByIdAndUpdate({ _id: id }, { $pull: { tasks: Types.ObjectId(taskId) } }, { useFindAndModify: false })
         await Task.findByIdAndRemove(taskId, { useFindAndModify: false })
+        res.send("ok");
     } catch (err) {
         return res.status(500).send({ message: err.message })
     }
