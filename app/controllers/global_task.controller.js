@@ -62,19 +62,18 @@ exports.findOne = async(req, res) => {
 }
 
 
-exports.update = (req, res) => {
+exports.update = async(req, res) => {
     if (!req.body) { return res.status(404).send({ message: "Data to update can not be empty!" }) }
 
     const id = req.params.id
-
     GlobalTask.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
             if (!data) {
-                res.status(404).send({ message: `Cannot update GlobalTask with id=${id}. Maybe Task was not found!` })
-            } else res.send({ message: "Project was updated successfully." });
+                res.status(404).send({ message: `Cannot update GlobalTask with id=${id}. Maybe GlobalTask was not found!` })
+            } else res.send({ message: "GlobalTask was updated successfully." });
         })
         .catch(err => {
-            res.status(500).send({ message: "Error updating GlobalTask with id=" + id })
+            res.status(500).send({ message: "Error updating Task with id=" + id })
         })
 }
 

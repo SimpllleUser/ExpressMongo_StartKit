@@ -166,14 +166,13 @@ exports.createInGlobal_task = async(req, res) => {
 
     const { title, description, status, type, priority, workLog, estimate, date } = req.body.task
 
-    //req.body.id
     if (!title && !description) {
         return res.status(400).send({ message: "Content can not be empty!" });
     }
 
     const task = new Task({
         title,
-        description: req.body.description,
+        description,
         status: "Open",
         type,
         priority,
@@ -181,9 +180,11 @@ exports.createInGlobal_task = async(req, res) => {
         estimate,
         date
     });
+
     try {
         const result = await task.save(task)
         await GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: result._id } }, { useFindAndModify: false })
+        console.log(result)
         return res.send(result)
     } catch (err) {
         return res.status(500).send({ message: err.message })
