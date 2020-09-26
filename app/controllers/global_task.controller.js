@@ -66,6 +66,7 @@ exports.update = async(req, res) => {
     if (!req.body) { return res.status(404).send({ message: "Data to update can not be empty!" }) }
 
     const id = req.params.id
+
     GlobalTask.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
             if (!data) {
@@ -73,7 +74,7 @@ exports.update = async(req, res) => {
             } else res.send({ message: "GlobalTask was updated successfully." });
         })
         .catch(err => {
-            res.status(500).send({ message: "Error updating Task with id=" + id })
+            res.status(500).send({ message: "Error updating GlobalTask with id=" + id })
         })
 }
 

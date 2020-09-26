@@ -12,7 +12,6 @@ exports.creaet = (req, res) => {
         return res.status(400).send({ message: "Content can not be empty!" })
     }
 
-
     const project = new Project({
         title,
         description
@@ -85,7 +84,7 @@ exports.update = (req, res) => {
     Project.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
             if (!data) {
-                res.status(404).send({ message: `Cannot update Task with id=${id}. Maybe Task was not found!` })
+                res.status(404).send({ message: `Cannot update Project with id=${id}. Maybe Task was not found!` })
             } else res.send({ message: "Project was updated successfully." });
         })
         .catch(err => {
@@ -120,13 +119,12 @@ exports.delete = (req, res) => {
 
 exports.createGlobalTask = async(req, res) => {
 
-    const { id, global_task } = req.body
+    const { id, global_task } = req.body.id
 
     if (!id && !global_task) {
         return res.status(400).send({ message: "Content can not be empty!" })
     }
 
-    console.log('id, global_task', id, global_task)
     const newGobal_task = new GlobalTask({
         title: global_task.title,
         description: global_task.description
@@ -135,7 +133,6 @@ exports.createGlobalTask = async(req, res) => {
         // .toString()
         const newGlobalTask = await newGobal_task.save(newGobal_task)
         await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: newGlobalTask._id } }, { useFindAndModify: false })
-        console.log(newGlobalTask)
         res.send(newGlobalTask)
     } catch (err) {
         res.status(500).send({

@@ -184,8 +184,7 @@ exports.createInGlobal_task = async(req, res) => {
     try {
         const result = await task.save(task)
         await GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: result._id } }, { useFindAndModify: false })
-        console.log(result)
-        return res.send(result)
+        res.send(result)
     } catch (err) {
         return res.status(500).send({ message: err.message })
     }
