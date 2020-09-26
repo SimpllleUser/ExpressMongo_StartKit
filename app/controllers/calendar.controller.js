@@ -3,32 +3,24 @@ const CalendarEvent = db.calendar_events;
 
 
 
-exports.create = (req, res) => {
+exports.create = async(req, res) => {
     // Validate request
-    if (!req.body.title) {
+    const { event } = req.body
+    if (!event.title) {
         res.status(400).send({ message: "Content can not be empty!" });
         return;
     }
 
-    // Create a CalendarEvent
-    const calendarEvent = new CalendarEvent({
-        title: req.body.title,
-        description: req.body.description,
-        date: req.body.date
-            // published: req.body.published ? req.body.published : false
-    });
+    const calendarEvent = new CalendarEvent(event);
 
-    // Save CalendarEvent in the database
-    calendarEvent
-        .save(calendarEvent)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the CalendarEvent."
-            });
+    try {
+        const response = await calendarEvent.save(calendarEvent)
+        res.send(response)
+    } catch (err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while creating the CalendarEvent."
         });
+    }
 };
 
 // Retrieve all CalendarEvents from the database.

@@ -45,27 +45,24 @@ exports.findAll = (req, res) => {
 
 exports.findOne = async(req, res) => {
     const id = req.params.id
-    GlobalTask.findById(id)
-        // .then(data => {
-        //     if (data) {
+    if (!id) {
+        return res.status(400).send({ message: "Content can not be empty!" })
+    }
+    try {
+        const global_task = await GlobalTask.findById(id)
+        let tasks = await Task.find({ '_id': { $in: global_task.tasks } })
+        tasks = JSON.parse(JSON.stringify(tasks).replace(/_id/gi, 'id')) // Замена _id на id
+        global_task.tasks = tasks
+        res.send(global_task);
+    } catch (err) {
+        res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
+    }
 
-    //     } else {
-    //         res.status(404).send({ message: "Not found Global_task with id " + id })
-    //     }
-    // })
-    // .catch(err => {
-    //     res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
-    // })
 
-    const global_task = await Project.findById(id)
-    let tasks = await GlobalTask.find({ '_id': { $in: global_task.tasks } })
-    tasks = JSON.parse(JSON.stringify(tasks).replace(/_id/gi, 'id')) // Замена _id на id
-    global_task.tasks = tasks
-    res.send(global_task)
 }
 
 
-exports.update = (req, res) => {
+exports.update = async(req, res) => {
     if (!req.body) { return res.status(404).send({ message: "Data to update can not be empty!" }) }
 
     const id = req.params.id
@@ -73,8 +70,8 @@ exports.update = (req, res) => {
     GlobalTask.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
             if (!data) {
-                res.status(404).send({ message: `Cannot update GlobalTask with id=${id}. Maybe Task was not found!` })
-            } else res.send({ message: "Project was updated successfully." });
+                res.status(404).send({ message: `Cannot update GlobalTask with id=${id}. Maybe GlobalTask was not found!` })
+            } else res.send({ message: "GlobalTask was updated successfully." });
         })
         .catch(err => {
             res.status(500).send({ message: "Error updating GlobalTask with id=" + id })
