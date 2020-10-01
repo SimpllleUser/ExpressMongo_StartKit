@@ -44,6 +44,30 @@ exports.findAll = (req, res) => {
 
 }
 
+exports.allData = async(req, res) => {
+
+    const id = req.params.id;
+    // if (!id) {
+    //     return res.status(404).send('Contecnt can`t be empty')
+    // }
+    try {
+        const project = await Project.findById(id)
+        let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
+
+        let tasks = []
+        global_tasks.forEach(g_task => tasks = [...tasks, ...g_task.tasks])
+        return res.send(global_tasks)
+
+        const allTasks = await Task.find().where('_id', tasks)
+
+        return res.send({ tasks: allTasks, global_tasks })
+    } catch (e) {
+        return res.send({ message: e.message })
+    }
+}
+
+
+
 exports.findOne = async(req, res) => {
     const id = req.params.id
 
@@ -61,20 +85,20 @@ exports.findOne = async(req, res) => {
     } catch (err) {
         res.send({ message: err.message || "Some err with get project" });
     }
-
-
-    //     .then(data => {
-    //             if (data) {
-    //                 res.send(data)
-    //             } else {
-    //                 res.status(404).send({ message: "Not found Task with id " + id })
-    //             }
-    //         })
-    //         .catch(err => {
-    //             res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
-    //         })
-    // }
 }
+
+//     .then(data => {
+//             if (data) {
+//                 res.send(data)
+//             } else {
+//                 res.status(404).send({ message: "Not found Task with id " + id })
+//             }
+//         })
+//         .catch(err => {
+//             res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
+//         })
+// }
+
 
 exports.update = (req, res) => {
     if (!req.body) { return res.status(404).send({ message: "Data to update can not be empty!" }) }

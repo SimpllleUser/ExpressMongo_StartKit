@@ -5,6 +5,7 @@ module.exports = app => {
     router.post('/', project.creaet)
     router.get('/', project.findAll)
     router.get('/:id', project.findOne)
+    router.get('/allData/:id', project.allData)
     router.put('/:id', project.update)
     router.delete('/:id', project.delete)
     router.post('/create/global-task', project.createGlobalTask)
