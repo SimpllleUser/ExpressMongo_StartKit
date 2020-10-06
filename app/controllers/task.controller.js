@@ -1,7 +1,7 @@
 const db = require("../models");
 const Task = db.tasks;
 const GlobalTask = db.global_task
-
+const Project = db.project
 const { Types } = require('mongoose')
 
 
@@ -41,9 +41,28 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Tasks from the database.
-exports.findAll = (req, res) => {
+exports.findAll = async(req, res) => {
+
     const title = req.query.title;
     var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+
+
+    const id = req.params.id;
+    if (!id) {
+        return res.status(404).send('Contecnt can`t be empty')
+    }
+
+    try {
+        const project = await Project.findById(id)
+        let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
+        let tasks = []
+        global_tasks.forEach(g_task => tasks = [...tasks, ...g_task.tasks])
+        const allTasks = await Task.find().where('_id', tasks)
+        return res.send(allTasks)
+    } catch (e) {
+        return res.send({ message: e.message })
+
+    }
 
     Task.find(condition)
         .then(data => {
