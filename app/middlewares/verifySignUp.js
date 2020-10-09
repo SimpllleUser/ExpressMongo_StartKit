@@ -36,7 +36,10 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
     });
 };
 
-checkRolesExisted = (req, res, next) => {
+checkRolesExisted = async(req, res, next) => {
+
+    const isFirstUser = await User.find({})
+    req.body.roles = !isFirstUser.length ? ['admin', 'moderator', 'user'] : ['user']
     if (req.body.roles) {
         for (let i = 0; i < req.body.roles.length; i++) {
             if (!ROLES.includes(req.body.roles[i])) {

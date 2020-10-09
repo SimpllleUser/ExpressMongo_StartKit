@@ -5,6 +5,7 @@ const db = require("../models")
 const Project = db.project
 const GlobalTask = db.global_task
 const Task = db.tasks
+const User = db.user
 exports.creaet = (req, res) => {
     const { title, description } = req.body
 
@@ -75,6 +76,7 @@ exports.findOne = async(req, res) => {
 
     try {
         const project = await Project.findById(id)
+        const users = await User.find()
         let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
         global_tasks = JSON.parse(JSON.stringify(global_tasks).replace(/_id/gi, 'id')) // Замена _id на id
         project.global_tasks = global_tasks
@@ -84,18 +86,6 @@ exports.findOne = async(req, res) => {
         res.send({ message: err.message || "Some err with get project" });
     }
 }
-
-//     .then(data => {
-//             if (data) {
-//                 res.send(data)
-//             } else {
-//                 res.status(404).send({ message: "Not found Task with id " + id })
-//             }
-//         })
-//         .catch(err => {
-//             res.status(500).send.message({ message: "Error retrieving Task with id=" + id })
-//         })
-// }
 
 
 exports.update = (req, res) => {
