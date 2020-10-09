@@ -6,8 +6,8 @@ const Project = db.project
 const GlobalTask = db.global_task
 const Task = db.tasks
 const User = db.user
-exports.creaet = (req, res) => {
-    const { title, description } = req.body
+exports.creaet = async(req, res) => {
+    const { title, description, user_id } = req.body
 
 
     if (!title) {
@@ -16,19 +16,27 @@ exports.creaet = (req, res) => {
 
     const project = new Project({
         title,
-        description
+        description,
+        user_id
     })
 
-    project
-        .save(project)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the Project."
-            });
-        });
+    try {
+        const data = await project.save(project)
+        await Project.findByIdAndUpdate({ _id: data.id }, { $push: { users: Types.ObjectId(user_id) } }, { useFindAndModify: false })
+        res.send(data)
+    } catch (err) {
+        return res.send({ message: err.message || "Some error occurred while creating the Project." })
+    }
+
+
+    // .then(data => {
+    //         res.send(data);
+    //     })
+    //     .catch(err => {
+    //         res.status(500).send({
+    //             message: err.message || "Some error occurred while creating the Project."
+    //         });
+    //     });
 
 }
 

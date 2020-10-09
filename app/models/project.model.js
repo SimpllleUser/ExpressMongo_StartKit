@@ -2,7 +2,8 @@ module.exports = mongoose => {
     var schema = mongoose.Schema({
         title: String,
         description: String,
-        global_tasks: []
+        global_tasks: [],
+        users: []
     }, { timestamps: true });
 
     schema.method("toJSON", function() {
