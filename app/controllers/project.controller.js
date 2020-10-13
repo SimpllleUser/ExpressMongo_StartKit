@@ -3,9 +3,8 @@ const { Types } = require('mongoose')
 const db = require("../models")
 
 const Project = db.project
-const GlobalTask = db.global_task
-const Task = db.tasks
-const User = db.user
+const ProjectUser = db.project_user
+
 exports.creaet = async(req, res) => {
     const { title, description, user_id } = req.body
 
@@ -21,22 +20,14 @@ exports.creaet = async(req, res) => {
     })
 
     try {
-        const data = await project.save(project)
-        await Project.findByIdAndUpdate({ _id: data.id }, { $push: { users: Types.ObjectId(user_id) } }, { useFindAndModify: false })
-        res.send(data)
+        const newProject = await project.save(project)
+        const project_user = new ProjectUser({ projectID: newProject.id, userID: user_id })
+        await project_user.save(project_user)
+        res.send(project)
     } catch (err) {
         return res.send({ message: err.message || "Some error occurred while creating the Project." })
     }
 
-
-    // .then(data => {
-    //         res.send(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({
-    //             message: err.message || "Some error occurred while creating the Project."
-    //         });
-    //     });
 
 }
 
@@ -84,10 +75,6 @@ exports.findOne = async(req, res) => {
 
     try {
         const project = await Project.findById(id)
-        const users = await User.find()
-        let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
-        global_tasks = JSON.parse(JSON.stringify(global_tasks).replace(/_id/gi, 'id')) // Замена _id на id
-        project.global_tasks = global_tasks
         res.send(project);
 
     } catch (err) {
@@ -137,41 +124,41 @@ exports.delete = (req, res) => {
         })
 };
 
-exports.createGlobalTask = async(req, res) => {
+// exports.createGlobalTask = async(req, res) => {
 
-    const { id, global_task } = req.body.id
+//     const { id, global_task } = req.body.id
 
-    if (!id && !global_task) {
-        return res.status(400).send({ message: "Content can not be empty!" })
-    }
+//     if (!id && !global_task) {
+//         return res.status(400).send({ message: "Content can not be empty!" })
+//     }
 
-    const newGobal_task = new GlobalTask({
-        title: global_task.title,
-        description: global_task.description
-    })
-    try {
-        // .toString()
-        const newGlobalTask = await newGobal_task.save(newGobal_task)
-        await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: newGlobalTask._id } }, { useFindAndModify: false })
-        res.send(newGlobalTask)
-    } catch (err) {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the GlobalTask."
-        });
-    }
-}
+//     const newGobal_task = new GlobalTask({
+//         title: global_task.title,
+//         description: global_task.description
+//     })
+//     try {
+//         // .toString()
+//         const newGlobalTask = await newGobal_task.save(newGobal_task)
+//         await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: newGlobalTask._id } }, { useFindAndModify: false })
+//         res.send(newGlobalTask)
+//     } catch (err) {
+//         res.status(500).send({
+//             message: err.message || "Some error occurred while creating the GlobalTask."
+//         });
+//     }
+// }
 
-exports.deleteGlobalTask = async(req, res) => {
-    const { id, global_taskId } = req.body
-    if (!id && !global_taskId) {
-        return res.status(400).send({ message: "Content can not find!" })
-    }
+// exports.deleteGlobalTask = async(req, res) => {
+//     const { id, global_taskId } = req.body
+//     if (!id && !global_taskId) {
+//         return res.status(400).send({ message: "Content can not find!" })
+//     }
 
-    try {
-        await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
-        await GlobalTask.findByIdAndRemove(global_taskId, { useFindAndModify: false })
-        res.send({ message: "Delete success" });
-    } catch (err) {
-        res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
-    }
-}
+//     try {
+//         await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
+//         await GlobalTask.findByIdAndRemove(global_taskId, { useFindAndModify: false })
+//         res.send({ message: "Delete success" });
+//     } catch (err) {
+//         res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
+//     }
+// }

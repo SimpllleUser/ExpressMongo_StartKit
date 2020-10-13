@@ -4,43 +4,44 @@ const db = require("../models")
 const Task = db.tasks
 const GlobalTask = db.global_task
 
-exports.create = (req, res) => {
-    const { title, description } = req.body
+exports.create = async(req, res) => {
+
+    const { title, description, project_id } = req.body.global_task
+
     if (!title) {
         return res.status(400).send({ message: "Content can not be empty!" })
     }
-
     const global_task = new GlobalTask({
         title,
-        description
+        description,
+        projectID: project_id
     })
 
-    global_task
-        .save(global_task)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the GlobalTask."
-            });
+    try {
+        const data = await global_task.save(global_task)
+        return res.send(data);
+    } catch (err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while creating the GlobalTask."
         });
+    }
+
 
 }
 
 
-exports.findAll = (req, res) => {
-    const { title, description } = req.body
-    var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+exports.findAll = async(req, res) => {
+    const { project_id } = res.params
+        // const { title, description } = req.body
+        // var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
 
-    GlobalTask.find(condition)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({ message: err.message || "Some error occurred while retrieving global_tasks." })
-        })
+    try {
+        const global_tasks = await GlobalTask.find({ projectID: project_id })
+        return res.send(global_tasks)
+    } catch (err) {
+        return res.status(500).send({ message: err.message || "Some error occurred while retrieving global_tasks." })
 
+    }
 }
 
 exports.findOne = async(req, res) => {
