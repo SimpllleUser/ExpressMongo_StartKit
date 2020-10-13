@@ -1,10 +1,8 @@
 module.exports = mongoose => {
     var schema = mongoose.Schema({
-        title: String,
-        description: String,
+        userID: String,
         projectID: String
     }, { timestamps: true });
-
 
     schema.method("toJSON", function() {
         const { __v, _id, ...object } = this.toObject();
@@ -12,6 +10,6 @@ module.exports = mongoose => {
         return object;
     });
 
-    const GlobalTask = mongoose.model("global_task", schema);
-    return GlobalTask;
+    const ProjectUser = mongoose.model("project_user", schema);
+    return ProjectUser;
 };

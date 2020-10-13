@@ -12,6 +12,7 @@ db.project = require("./project.model")(mongoose)
 db.user = require("./user.model")
 db.role = require("./role.model")
 db.global_task = require("./global_task.model")(mongoose)
+db.project_user = require("./project_user.model")(mongoose)
 
 db.ROLES = ["user", "admin", "moderator"];
 

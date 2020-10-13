@@ -7,7 +7,10 @@ module.exports = mongoose => {
         type: String,
         workLog: Number,
         estimate: Number,
-        date: String
+        date: String,
+        global_taskID: String,
+        author_UserID: String,
+        responsible_UserID: String,
     }, { timestamps: true });
 
     schema.method("toJSON", function() {
