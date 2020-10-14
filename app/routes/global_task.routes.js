@@ -3,7 +3,7 @@ module.exports = app => {
     var router = require("express").Router()
 
     router.post('/', global_task.create)
-    router.get('/:project_id', global_task.findAll)
+    router.get('/all/:project_id', global_task.findAll)
         // router.post('/', global_task.create)
     router.get('/:id', global_task.findOne)
         // router.post('/create-task', global_task.addTask)
