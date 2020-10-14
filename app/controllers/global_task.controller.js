@@ -32,15 +32,12 @@ exports.create = async(req, res) => {
 
 exports.findAll = async(req, res) => {
     const { project_id } = req.params
-        // var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
-    console.log(req.params)
+
     try {
         const global_tasks = await GlobalTask.find({ projectID: project_id })
         return res.send(global_tasks)
     } catch (err) {
-        console.log('err', err)
-            // return res.status(500).send({ message: err.message || "Some error occurred while retrieving global_tasks." })
-
+        return res.status(500).send({ message: err.message || "Some error occurred while retrieving global_tasks." })
     }
 }
 
