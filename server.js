@@ -9,14 +9,11 @@ var corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// parse requests of content-type - application/json
 app.use(bodyParser.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const db = require("./app/models");
-const { count } = require("./app/models/user.model");
+const db = require("./models");
+// const { count } = require("./components/user/user.model");
 const Role = db.role;
 
 
@@ -43,7 +40,6 @@ function initial() {
                 if (err) {
                     console.log("error", err);
                 }
-
                 console.log("added 'user' to roles collection");
             });
 
@@ -75,12 +71,12 @@ app.get("/", (req, res) => {
     res.json({ message: "Welcome to  application." });
 });
 
-require("./app/components/task/task.routes")(app);
-require("./app/components/calendar/calendar.routes")(app);
-require('./app/routes/auth.routes')(app);
-require('./app/components/user/user.routes')(app);
-require('./app/components/project/project.routes')(app);
-require('./app/components/global_task/global_task.routes')(app);
+require("./components/task/task.routes")(app);
+require("./components/calendar/calendar.routes")(app);
+require('./routes/auth.routes')(app);
+require('./components/user/user.routes')(app);
+require('./components/project/project.routes')(app);
+require('./components/global_task/global_task.routes')(app);
 
 
 

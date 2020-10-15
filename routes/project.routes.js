@@ -1,4 +1,5 @@
-const { authJwt } = require("../middlewares/index");
+// const { authJwt } = require("../middlewares/index");
+const project = require("../components/project/project.controller")
 
 module.exports = app => {
     app.use(function(req, res, next) {
@@ -9,7 +10,6 @@ module.exports = app => {
         next();
     });
 
-    const project = require("../controllers/project.controller")
     var router = require("express").Router()
         // ! Add middle ware
     router.post('/', project.creaet)

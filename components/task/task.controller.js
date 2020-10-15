@@ -1,5 +1,8 @@
-const Task = require("./task.model");
 const { Types } = require('mongoose')
+const db = require("../../models");
+const Task = db.tasks;
+const GlobalTask = db.global_task
+const Project = db.project
 
 exports.create = async(req, res) => {
 

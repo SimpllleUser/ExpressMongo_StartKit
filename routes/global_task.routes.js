@@ -1,5 +1,5 @@
 module.exports = app => {
-    const global_task = require("../controllers/global_task.controller")
+    const global_task = require("../components/global_task/global_task.controller")
     var router = require("express").Router()
     router.get('/:id', global_task.findOne)
     router.post('/', global_task.create)

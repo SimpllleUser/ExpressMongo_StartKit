@@ -1,5 +1,5 @@
 module.exports = app => {
-    const calendarEvents = require("../controllers/calendar.controller.js");
+    const calendarEvents = require("../components/calendar/calendar.controller");
 
     var router = require("express").Router();
 

@@ -1,5 +1,8 @@
-const Task = require("../task/task.model")
-const GlobalTask = require("../global_task/global_task.model")
+const { global_task } = require("../../models")
+const db = require("../../models")
+
+const Task = db.tasks
+const GlobalTask = db.global_task
 
 exports.create = async(req, res) => {
 

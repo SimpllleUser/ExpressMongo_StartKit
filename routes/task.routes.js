@@ -1,5 +1,5 @@
 module.exports = app => {
-    const tasks = require("../controllers/task.controller.js");
+    const tasks = require("../components/task/task.controller.js");
     var router = require("express").Router();
     router.post("/", tasks.create);
     router.get("/all/:global_taskID", tasks.findAll);

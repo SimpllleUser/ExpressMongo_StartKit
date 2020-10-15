@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
-const Project = require("../project/project.model")(mongoose)
-const ProjectUser = require("../project/project_user.model")(mongoose)
-console.log('Project', require("../project/project.model"))
+const { Types } = require('mongoose')
+const { project } = require("../../models")
+const db = require("../../models")
+
+const Project = db.project
+const ProjectUser = db.project_user
 exports.creaet = async(req, res) => {
     const { title, description, user_id } = req.body
 
