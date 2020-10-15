@@ -4,10 +4,10 @@ const GlobalTask = db.global_task
 const Project = db.project
 const { Types } = require('mongoose')
 
+exports.create = async(req, res) => {
 
-// Create and Save a new Task
-exports.create = (req, res) => {
-    // Validate request
+    //global_taskID
+    const { global_taskID, newTask, author_UserID } = req.body
 
     if (!req.body.title) {
         res.status(400).send({ message: "Content can not be empty!" });
@@ -16,63 +16,51 @@ exports.create = (req, res) => {
 
     // Create a Task
     const task = new Task({
-        title: req.body.title,
-        description: req.body.description,
-        status: req.body.status,
-        type: req.body.type,
-        priority: req.body.priority,
+        title: newTask.title,
+        description: newTask.description,
+        status: newTask.status,
+        type: newTask.type,
+        priority: newTask.priority,
         workLog: 0,
-        estimate: req.body.estimate,
-        date: req.body.date
-            // published: req.body.published ? req.body.published : false
+        estimate: newTask.estimate,
+        global_taskID: global_taskID,
+        author_UserID: author_UserID,
+        date: newTask.date
     });
 
-    // Save Task in the database
-    task
-        .save(task)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the Task."
-            });
+    try {
+        const ceratedTask = await task.save(task)
+        res.send(ceratedTask);
+    } catch (err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while creating the Task."
         });
+    }
 };
 
 // Retrieve all Tasks from the database.
 exports.findAll = async(req, res) => {
 
-    const title = req.query.title;
-    var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
-
-
-    const id = req.params.id;
-    if (!id) {
+    const global_taskID = req.params.global_taskID;
+    if (!global_taskID) {
         return res.status(404).send('Contecnt can`t be empty')
     }
-
     try {
-        const project = await Project.findById(id)
-        let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
-        let tasks = []
-        global_tasks.forEach(g_task => tasks = [...tasks, ...g_task.tasks])
-        const allTasks = await Task.find().where('_id', tasks)
-        return res.send(allTasks)
+        const tasks = await await GlobalTask.find({ global_taskID })
+        return res.send(tasks)
     } catch (e) {
         return res.send({ message: e.message })
-
     }
 
-    Task.find(condition)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving tasks."
-            });
-        });
+    // Task.find(condition)
+    //     .then(data => {
+    //         res.send(data);
+    //     })
+    //     .catch(err => {
+    //         res.status(500).send({
+    //             message: err.message || "Some error occurred while retrieving tasks."
+    //         });
+    //     });
 };
 
 // Find a single Task with an id

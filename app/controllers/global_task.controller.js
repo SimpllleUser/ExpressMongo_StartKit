@@ -43,6 +43,7 @@ exports.findAll = async(req, res) => {
 
 exports.findOne = async(req, res) => {
     const id = req.params.id
+    return res.send(id)
     if (!id) {
         return res.status(400).send({ message: "Content can not be empty!" })
     }

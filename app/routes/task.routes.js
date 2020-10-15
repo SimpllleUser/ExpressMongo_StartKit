@@ -2,8 +2,7 @@ module.exports = app => {
     const tasks = require("../controllers/task.controller.js");
     var router = require("express").Router();
     router.post("/", tasks.create);
-    // router.get("/", tasks.findAll);
-    router.get("/published", tasks.findAllPublished);
+    router.get("/all/:global_taskID", tasks.findAll);
     router.get("/id=:id", tasks.findOne);
     router.put("/:id", tasks.update);
     router.put("/work-log/:id", tasks.update);
