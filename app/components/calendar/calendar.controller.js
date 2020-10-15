@@ -1,7 +1,4 @@
-// const db = require("../modelss");
-const CalendarEvent = require("../calendar/calendar.model");
-
-
+const db = require("../modelss");
 
 exports.create = async(req, res) => {
     // Validate request

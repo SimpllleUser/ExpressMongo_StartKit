@@ -75,12 +75,12 @@ app.get("/", (req, res) => {
     res.json({ message: "Welcome to  application." });
 });
 
-require("./app/routes/task.routes")(app);
-require("./app/routes/calendar.routes")(app);
+require("./app/components/task/task.routes")(app);
+require("./app/components/calendar/calendar.routes")(app);
 require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
-require('./app/routes/project.routes')(app);
-require('./app/routes/global_task.routes')(app);
+require('./app/components/user/user.routes')(app);
+require('./app/components/project/project.routes')(app);
+require('./app/components/global_task/global_task.routes')(app);
 
 
 
