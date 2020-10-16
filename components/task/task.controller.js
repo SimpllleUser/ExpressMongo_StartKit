@@ -9,7 +9,7 @@ exports.create = async(req, res) => {
     //global_taskID
     const { global_taskID, newTask, author_UserID } = req.body
 
-    if (!req.body.title) {
+    if (!global_taskID || !global_taskID || !global_taskID) {
         res.status(400).send({ message: "Content can not be empty!" });
         return;
     }
@@ -23,8 +23,8 @@ exports.create = async(req, res) => {
         priority: newTask.priority,
         workLog: 0,
         estimate: newTask.estimate,
-        global_taskID: global_taskID,
-        author_UserID: author_UserID,
+        global_taskID,
+        author_UserID,
         date: newTask.date
     });
 
@@ -46,7 +46,7 @@ exports.findAll = async(req, res) => {
         return res.status(404).send('Contecnt can`t be empty')
     }
     try {
-        const tasks = await await GlobalTask.find({ global_taskID })
+        const tasks = await await Task.find({ global_taskID })
         return res.send(tasks)
     } catch (e) {
         return res.send({ message: e.message })
