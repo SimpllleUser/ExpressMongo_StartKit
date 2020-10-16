@@ -46,7 +46,7 @@ exports.findAll = async(req, res) => {
         return res.status(404).send('Contecnt can`t be empty')
     }
     try {
-        const tasks = await await GlobalTask.find({ global_taskID })
+        const tasks = await await Task.find({ global_taskID })
         return res.send(tasks)
     } catch (e) {
         return res.send({ message: e.message })
