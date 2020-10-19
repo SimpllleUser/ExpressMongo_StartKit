@@ -2,19 +2,15 @@ const { Types } = require('mongoose')
 const db = require("../../models");
 const Task = db.tasks;
 const GlobalTask = db.global_task
-const Project = db.project
 
 exports.create = async(req, res) => {
 
-    //global_taskID
     const { global_taskID, newTask, author_UserID } = req.body
 
     if (!global_taskID || !global_taskID || !global_taskID) {
         res.status(400).send({ message: "Content can not be empty!" });
         return;
     }
-
-    // Create a Task
     const task = new Task({
         title: newTask.title,
         description: newTask.description,
@@ -52,15 +48,6 @@ exports.findAll = async(req, res) => {
         return res.send({ message: e.message })
     }
 
-    // Task.find(condition)
-    //     .then(data => {
-    //         res.send(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({
-    //             message: err.message || "Some error occurred while retrieving tasks."
-    //         });
-    //     });
 };
 
 // Find a single Task with an id
@@ -81,7 +68,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Task by the id in the request
-exports.update = (req, res) => {
+exports.update = async(req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
@@ -90,22 +77,21 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
-    Task.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-        .then(data => {
-            if (!data) {
-                res.status(404).send({
-                    message: `Cannot update Task with id=${id}. Maybe Task was not found!`
-                });
-            } else res.send({ message: "Task was updated successfully." });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Task with id=" + id
+    try {
+        const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
+        if (!data) {
+            res.status(404).send({
+                message: `Cannot update Task with id=${id}. Maybe Task was not found!`
             });
+        }
+        return res.send(data)
+    } catch (err) {
+        return res.status(500).send({
+            message: "Error updating Task with id=" + id
         });
+    }
 };
 
-// Delete a Task with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
     Task.findByIdAndRemove(id, { useFindAndModify: false })
@@ -130,85 +116,17 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Tasks from the database.
-exports.deleteAll = (req, res) => {
-    Task.deleteMany({})
-        .then(data => {
-            res.send({
-                message: `${data.deletedCount} Tasks were deleted successfully!`
-            });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while removing all tasks."
-            });
-        });
-};
+exports.getAllFromGlobalTasks = async(req, res) => {
+    const global_tasks = Object.values(req.query)[0];
 
-// Find all published Tasks
-exports.findAllPublished = (req, res) => {
-    Task.find({ published: true })
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving tasks."
-            });
-        });
-};
-exports.findGlobalTask = async(req, res) => {
-    const id = req.body.id;
-    try {
-        const globalTask = await GlobalTask.findById(id)
-        return res.send(globalTask);
-    } catch (err) {
-        res.status(404).send({ message: err || "Not found Global_task with id" })
+    if (!global_tasks) {
+        return res.status(404).send({ message: "Empty" })
     }
-
-}
-
-exports.createInGlobal_task = async(req, res) => {
-    const id = req.body.id
-
-    const { title, description, status, type, priority, workLog, estimate, date } = req.body.task
-
-    if (!title && !description) {
-        return res.status(400).send({ message: "Content can not be empty!" });
-    }
-
-    const task = new Task({
-        title,
-        description,
-        status: "Open",
-        type,
-        priority,
-        workLog: 0,
-        estimate,
-        date
-    });
 
     try {
-        const result = await task.save(task)
-        await GlobalTask.findByIdAndUpdate({ _id: id }, { $push: { tasks: result._id } }, { useFindAndModify: false })
-        res.send(result)
+        const tasks = await Task.find({ 'global_taskID': { $in: global_tasks } })
+        return res.send(tasks)
     } catch (err) {
-        return res.status(500).send({ message: err.message })
-    }
-
-
-}
-
-exports.deleteInGlobal_task = async(req, res) => {
-    const { id, taskId } = req.body
-    if (!id && !taskId) {
-        return res.status(400).send({ message: "Content can not be empty!" });
-    }
-    try {
-        await GlobalTask.findByIdAndUpdate({ _id: id }, { $pull: { tasks: Types.ObjectId(taskId) } }, { useFindAndModify: false })
-        await Task.findByIdAndRemove(taskId, { useFindAndModify: false })
-        res.send("ok");
-    } catch (err) {
-        return res.status(500).send({ message: err.message })
+        return res.send(err)
     }
 }

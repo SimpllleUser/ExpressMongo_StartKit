@@ -21,19 +21,30 @@ exports.create = async(req, res) => {
 };
 
 // Retrieve all CalendarEvents from the database.
-exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+exports.findAll = async(req, res) => {
+    const user_id = req.params.user_id;
+    // const title = req.query.title;
+    // var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
 
-    CalendarEvent.find(condition)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving tasks."
-            });
+    try {
+        const events = await CalendarEvent.find({ 'user_id': user_id })
+        return res.send(events)
+    } catch (err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving events."
         });
+    }
+
+
+    // CalendarEvent.find(condition)
+    //     .then(data => {
+    //         res.send(data);
+    //     })
+    //     .catch(err => {
+    //         res.status(500).send({
+    //             message: err.message || "Some error occurred while retrieving tasks."
+    //         });
+    //     });
 };
 
 // Find a single CalendarEvent with an id
