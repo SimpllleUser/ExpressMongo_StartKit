@@ -40,13 +40,6 @@ exports.findAll = async(req, res) => {
     } catch (err) {
         return res.status(500).send({ message: err.message || "Some error occurred while retrieving projects." })
     }
-    // Project.find({})
-    //     .then(data => {
-    //         res.send(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({ message: err.message || "Some error occurred while retrieving projects." })
-    //     })
 }
 
 exports.allData = async(req, res) => {
@@ -127,42 +120,3 @@ exports.delete = (req, res) => {
             })
         })
 };
-
-// exports.createGlobalTask = async(req, res) => {
-
-//     const { id, global_task } = req.body.id
-
-//     if (!id && !global_task) {
-//         return res.status(400).send({ message: "Content can not be empty!" })
-//     }
-
-//     const newGobal_task = new GlobalTask({
-//         title: global_task.title,
-//         description: global_task.description
-//     })
-//     try {
-//         // .toString()
-//         const newGlobalTask = await newGobal_task.save(newGobal_task)
-//         await Project.findByIdAndUpdate({ _id: id }, { $push: { global_tasks: newGlobalTask._id } }, { useFindAndModify: false })
-//         res.send(newGlobalTask)
-//     } catch (err) {
-//         res.status(500).send({
-//             message: err.message || "Some error occurred while creating the GlobalTask."
-//         });
-//     }
-// }
-
-// exports.deleteGlobalTask = async(req, res) => {
-//     const { id, global_taskId } = req.body
-//     if (!id && !global_taskId) {
-//         return res.status(400).send({ message: "Content can not find!" })
-//     }
-
-//     try {
-//         await Project.findByIdAndUpdate({ _id: id }, { $pull: { global_tasks: Types.ObjectId(global_taskId) } }, { useFindAndModify: false })
-//         await GlobalTask.findByIdAndRemove(global_taskId, { useFindAndModify: false })
-//         res.send({ message: "Delete success" });
-//     } catch (err) {
-//         res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
-//     }
-// }

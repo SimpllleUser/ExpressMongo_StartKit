@@ -1,26 +1,31 @@
 const { authJwt } = require("../../middlewares");
-const controller = require("./user.controller");
+const user = require("./user.controller");
+const router = require("express").Router();
 
-module.exports = function(app) {
-    app.use(function(req, res, next) {
-        res.header(
-            "Access-Control-Allow-Headers",
-            "x-access-token, Origin, Content-Type, Accept"
-        );
-        next();
-    });
+module.exports = app => {
+    // app.use(function(req, res, next) {
+    //     res.header(
+    //         "Access-Control-Allow-Headers",
+    //         "x-access-token, Origin, Content-Type, Accept"
+    //     );
+    //     next();
+    // });
 
-    app.get("/api/userAuth/all", controller.allAccess);
+    // app.get("/userAuth/all", user.allAccess);
 
-    app.get("/api/userAuth/user", [authJwt.verifyToken], controller.userBoard);
+    // app.get("/userAuth/user", [authJwt.verifyToken], user.userBoard);
 
-    app.get(
-        "/api/userAuth/mod", [authJwt.verifyToken, authJwt.isModerator],
-        controller.moderatorBoard
-    );
+    // app.get(
+    //     "/user/mod", [authJwt.verifyToken, authJwt.isModerator],
+    //     user.moderatorBoard
+    // );
 
-    app.get(
-        "/api/userAuth/admin", [authJwt.verifyToken, authJwt.isAdmin],
-        controller.adminBoard
-    );
+    // app.get(
+    //     "userAuth/admin", [authJwt.verifyToken, authJwt.isAdmin],
+    //     user.adminBoard
+    // );
+    router.get("/user/all/:project_id", user.getAll)
+    router.post("/user/addUser", user.addUser)
+    router.delete("/user/delete-from-project", user.deleteFromProject)
+    app.use("/api", router);
 };
