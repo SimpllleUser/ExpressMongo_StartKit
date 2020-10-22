@@ -15,6 +15,7 @@ module.exports = app => {
     router.get('/', project.findAll)
     router.get('/:id', project.findOne)
     router.get('/allData/:id', project.allData)
+    router.get('/users/:id', project.getProjectsUser)
     router.put('/:id', project.update)
     router.delete('/:id', project.delete)
 

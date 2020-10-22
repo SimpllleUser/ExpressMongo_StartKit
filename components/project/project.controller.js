@@ -120,3 +120,17 @@ exports.delete = (req, res) => {
             })
         })
 };
+
+
+exports.getProjectsUser = async(req, res) => {
+    const { id } = req.params;
+    try {
+        const projectsUser = await ProjectUser.find({ "userID": id })
+        const projectsId = projectsUser.map(item => item.projectID)
+        const projects = await Project.find({ '_id': { $in: projectsId } })
+        return res.send(projects)
+    } catch (err) {
+
+    }
+
+}
