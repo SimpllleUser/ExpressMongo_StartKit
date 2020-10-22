@@ -40,7 +40,7 @@ exports.addUser = async(req, res) => {
         if (userOnProject[0] === undefined) {
             const projectUser = new ProjectUser({ projectID: project_id, userID: user_id })
             await projectUser.save(projectUser)
-            return res.send(user)
+            return res.send({ id: user.id, name: user.name, email: user.email })
         } else {
             return res.status(500).send({ message: "This user exist on this project" })
         }
