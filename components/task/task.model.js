@@ -8,6 +8,7 @@ module.exports = mongoose => {
         workLog: Number,
         estimate: Number,
         date: String,
+        comments: Array,
         global_taskID: String,
         author_UserID: String,
         responsible_UserID: String,

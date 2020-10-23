@@ -1,13 +1,11 @@
 const { Types } = require('mongoose')
 const db = require("../../models");
 const Task = db.tasks;
-const GlobalTask = db.global_task
 
 exports.create = async(req, res) => {
 
-    const { global_taskID, newTask, author_UserID } = req.body
-
-    if (!global_taskID || !global_taskID || !global_taskID) {
+    const { globalTaskID, newTask, authorID } = req.body
+    if (!globalTaskID || !newTask || !authorID) {
         res.status(400).send({ message: "Content can not be empty!" });
         return;
     }
@@ -19,16 +17,16 @@ exports.create = async(req, res) => {
         priority: newTask.priority,
         workLog: 0,
         estimate: newTask.estimate,
-        global_taskID,
-        author_UserID,
+        global_taskID: globalTaskID,
+        author_UserID: authorID,
         date: newTask.date
     });
 
     try {
         const ceratedTask = await task.save(task)
-        res.send(ceratedTask);
+        return res.send(ceratedTask);
     } catch (err) {
-        res.status(500).send({
+        return res.status(500).send({
             message: err.message || "Some error occurred while creating the Task."
         });
     }
@@ -79,12 +77,22 @@ exports.update = async(req, res) => {
 
     try {
         const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
+
         if (!data) {
             res.status(404).send({
                 message: `Cannot update Task with id=${id}. Maybe Task was not found!`
             });
         }
-        return res.send(data)
+
+        const spentTime = req.body.workLog - data.workLog;
+
+        const comment = {
+            text: `Было потрачено ${spentTime}ч на задачу`,
+            date: new Date().toLocaleDateString()
+        }
+        const newComment = await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
+
+        return res.send({ data, newComment })
     } catch (err) {
         return res.status(500).send({
             message: "Error updating Task with id=" + id
