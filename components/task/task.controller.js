@@ -72,28 +72,37 @@ exports.update = async(req, res) => {
             message: "Data to update can not be empty!"
         });
     }
-
     const id = req.params.id;
+    // Object.keys(obj) получить в массиве все свйоства обьекта.
+    // Сделать проверку на запись workLog и на наличие  options и id task
 
     try {
         const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
+        const date = new Date().toLocaleDateString()
+        if (req.body.workLog) {
+            const spentTime = req.body.workLog - data.workLog;
+            const comment = {
+                text: `Было потрачено ${spentTime}ч на задачу`,
+                date
+            }
+            await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
+        } else {
+            const option = Object.keys(req.body)[0]
+            const comment = {
+                text: `Был сменен ${option}: ${data[option]} => ${req.body[option]} `
+            }
+            await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
 
-        if (!data) {
-            res.status(404).send({
-                message: `Cannot update Task with id=${id}. Maybe Task was not found!`
-            });
         }
-        const spentTime = req.body.workLog - data.workLog;
-        const comment = {
-            text: `Было потрачено ${spentTime}ч на задачу`,
-            date: new Date().toLocaleDateString()
-        }
-        const newComment = await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
+
+        return res.send(data)
+
+        // const newComment = await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
 
         return res.send({ data, newComment })
     } catch (err) {
-        return res.status(500).send({
-            message: "Error updating Task with id=" + id
+        return res.send({
+            message: err.message || "Error updating Task with id=" + id
         });
     }
 };
