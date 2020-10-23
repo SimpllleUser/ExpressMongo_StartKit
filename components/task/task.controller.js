@@ -1,8 +1,9 @@
 const { Types } = require('mongoose')
 const db = require("../../models");
 const Task = db.tasks;
+const User = db.user;
 
-exports.create = async(req, res) => {
+exports.create = async (req, res) => {
 
     const { globalTaskID, newTask, authorID } = req.body
     if (!globalTaskID || !newTask || !authorID) {
@@ -33,7 +34,7 @@ exports.create = async(req, res) => {
 };
 
 // Retrieve all Tasks from the database.
-exports.findAll = async(req, res) => {
+exports.findAll = async (req, res) => {
 
     const global_taskID = req.params.global_taskID;
     if (!global_taskID) {
@@ -66,12 +67,13 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Task by the id in the request
-exports.update = async(req, res) => {
+exports.update = async (req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
         });
     }
+
     const id = req.params.id;
     // Object.keys(obj) получить в массиве все свйоства обьекта.
     // Сделать проверку на запись workLog и на наличие  options и id task
@@ -79,27 +81,20 @@ exports.update = async(req, res) => {
     try {
         const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
         const date = new Date().toLocaleDateString()
-        if (req.body.workLog) {
-            const spentTime = req.body.workLog - data.workLog;
-            const comment = {
-                text: `Было потрачено ${spentTime}ч на задачу`,
-                date
-            }
-            await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
-        } else {
-            const option = Object.keys(req.body)[0]
-            const comment = {
-                text: `Был сменен ${option}: ${data[option]} => ${req.body[option]} `
-            }
-            await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
-
+        const spentTime = data.workLog ? req.body.workLog - data.workLog : 0;
+        const option = Object.keys(req.body.option)[0] || null
+        const text = !req.body.workLog ? `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
+                            : `Было потрачено ${spentTime}ч на задачу`
+        const dataUser = await User.findById({"_id": req.body.author})
+        const author = {
+            id: dataUser._id,
+            name: dataUser.name,
+            email: dataUser.email
         }
+        await Task.findByIdAndUpdate(id, { $push: { comments: {text, date, author} } }, { useFindAndModify: true })
 
         return res.send(data)
 
-        // const newComment = await Task.findByIdAndUpdate(id, { $push: { comments: comment } }, { useFindAndModify: true })
-
-        return res.send({ data, newComment })
     } catch (err) {
         return res.send({
             message: err.message || "Error updating Task with id=" + id
@@ -131,7 +126,7 @@ exports.delete = (req, res) => {
         });
 };
 
-exports.getAllFromGlobalTasks = async(req, res) => {
+exports.getAllFromGlobalTasks = async (req, res) => {
     const global_tasks = Object.values(req.query)[0];
 
     if (!global_tasks) {
