@@ -82,13 +82,13 @@ exports.update = async (req, res) => {
         const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
         const date = new Date().toLocaleDateString()
         const spentTime = data.workLog ? req.body.workLog - data.workLog : 0;
-        const option = Object.keys(req.body.option)[0] || null
+        const option = req.body.option && Object.keys(req.body.option)[0] 
         const text = !req.body.workLog ? `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
                             : `Было потрачено ${spentTime}ч на задачу`
         const dataUser = await User.findById({"_id": req.body.author})
         const author = {
             id: dataUser._id,
-            name: dataUser.name,
+            name: dataUser.username,
             email: dataUser.email
         }
         await Task.findByIdAndUpdate(id, { $push: { comments: {text, date, author} } }, { useFindAndModify: true })
