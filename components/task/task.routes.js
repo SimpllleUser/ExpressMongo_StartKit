@@ -8,8 +8,5 @@ module.exports = app => {
     router.put("/work-log/:id", tasks.update);
     router.delete("/:id", tasks.delete);
     router.get("/all-tasks/from/globlal-tasks", tasks.getAllFromGlobalTasks)
-
     app.use("/api/tasks", router);
 };
-
-// getAllFromGlobalTasks

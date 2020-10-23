@@ -83,9 +83,7 @@ exports.update = async(req, res) => {
                 message: `Cannot update Task with id=${id}. Maybe Task was not found!`
             });
         }
-
         const spentTime = req.body.workLog - data.workLog;
-
         const comment = {
             text: `Было потрачено ${spentTime}ч на задачу`,
             date: new Date().toLocaleDateString()
@@ -118,7 +116,7 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Task with id=" + id,
+                message: err.message || "Could not delete Task with id=" + id,
                 status: false
             });
         });
