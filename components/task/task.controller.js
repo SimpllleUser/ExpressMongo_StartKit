@@ -3,7 +3,7 @@ const db = require("../../models");
 const Task = db.tasks;
 const User = db.user;
 
-exports.create = async (req, res) => {
+exports.create = async(req, res) => {
 
     const { globalTaskID, newTask, authorID } = req.body
     if (!globalTaskID || !newTask || !authorID) {
@@ -34,7 +34,7 @@ exports.create = async (req, res) => {
 };
 
 // Retrieve all Tasks from the database.
-exports.findAll = async (req, res) => {
+exports.findAll = async(req, res) => {
 
     const global_taskID = req.params.global_taskID;
     if (!global_taskID) {
@@ -67,7 +67,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Task by the id in the request
-exports.update = async (req, res) => {
+exports.update = async(req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
@@ -82,16 +82,16 @@ exports.update = async (req, res) => {
         const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
         const date = new Date().toLocaleDateString()
         const spentTime = data.workLog ? req.body.workLog - data.workLog : 0;
-        const option = req.body.option && Object.keys(req.body.option)[0] 
-        const text = !req.body.workLog ? `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
-                            : `Было потрачено ${spentTime}ч на задачу`
-        const dataUser = await User.findById({"_id": req.body.author})
+        const option = req.body.option && Object.keys(req.body.option)[0]
+        const text = !req.body.workLog ? `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} ` :
+            `Было потрачено ${spentTime}ч на задачу пользователем`
+        const dataUser = await User.findById({ "_id": req.body.author })
         const author = {
             id: dataUser._id,
             name: dataUser.username,
             email: dataUser.email
         }
-        await Task.findByIdAndUpdate(id, { $push: { comments: {text, date, author} } }, { useFindAndModify: true })
+        await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: true })
 
         return res.send(data)
 
@@ -126,7 +126,7 @@ exports.delete = (req, res) => {
         });
 };
 
-exports.getAllFromGlobalTasks = async (req, res) => {
+exports.getAllFromGlobalTasks = async(req, res) => {
     const global_tasks = Object.values(req.query)[0];
 
     if (!global_tasks) {
