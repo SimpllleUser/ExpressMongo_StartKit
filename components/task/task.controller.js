@@ -74,12 +74,16 @@ exports.update = async(req, res) => {
         });
     }
 
+    console.log(req.body)
+
+    const params = req.body.option || req.body
+
     const id = req.params.id;
     // Object.keys(obj) получить в массиве все свйоства обьекта.
     // Сделать проверку на запись workLog и на наличие  options и id task
 
     try {
-        const data = await Task.findByIdAndUpdate(id, req.body, { useFindAndModify: true })
+        const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: true })
         const date = new Date().toLocaleDateString()
         const spentTime = data.workLog ? req.body.workLog - data.workLog : 0;
         const option = req.body.option && Object.keys(req.body.option)[0]
