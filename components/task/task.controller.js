@@ -73,11 +73,7 @@ exports.update = async(req, res) => {
             message: "Data to update can not be empty!"
         });
     }
-
-    console.log(req.body)
-
     const params = req.body.option || req.body
-
     const id = req.params.id;
     // Object.keys(obj) получить в массиве все свйоства обьекта.
     // Сделать проверку на запись workLog и на наличие  options и id task
