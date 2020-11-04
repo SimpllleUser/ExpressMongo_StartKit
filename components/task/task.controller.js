@@ -81,10 +81,8 @@ exports.update = async(req, res) => {
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
         const date = new Date().toLocaleDateString()
-        const spentTime = data.workLog && req.body.workLog - data.workLog;
         const option = req.body.option && Object.keys(req.body.option)[0]
-        const text = !req.body.workLog ? `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} ` :
-            `Было потрачено ${spentTime}ч на задачу пользователем`
+        const text = `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
         const dataUser = await User.findById({ "_id": req.body.author })
         const author = {
             id: dataUser._id,
@@ -92,9 +90,7 @@ exports.update = async(req, res) => {
             email: dataUser.email
         }
         await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
-        if (req.body.option) {
-            data[option] = req.body.option[option]
-        }
+
         data.comments.push({ text, date, author })
 
         return res.send(data)
@@ -107,8 +103,71 @@ exports.update = async(req, res) => {
 };
 
 
-exports.setWorkLog = (req, res) => {}
-exports.setOptions = (req, res) => {}
+exports.setWorkLog = async(req, res) => {
+    if (!req.body) {
+        return res.status(400).send({
+            message: "Data to update can not be empty!"
+        });
+    }
+    const { workLog } = req.body
+    const params = req.body
+    try {
+        const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
+        const spentTime = workLog - data.workLog
+        const text = `Было потрачено ${spentTime}ч на задачу пользователем`
+        const dataUser = await User.findById({ "_id": req.body.author })
+        const author = {
+            id: dataUser._id,
+            name: dataUser.username,
+            email: dataUser.email
+        }
+        const date = new Date().toLocaleDateString()
+        await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
+        data.comments.push({ text, date, author })
+        data.workLog = workLog
+        return res.send(data)
+
+    } catch (err) {
+        return res.send({
+            message: err.message || "Error updating Task with id=" + id
+        });
+    }
+
+}
+exports.setOptions = async(req, res) => {
+    if (!req.body) {
+        return res.status(400).send({
+            message: "Data to update can not be empty!"
+        });
+    }
+    const params = req.body.option || req.body
+    const id = req.params.id;
+    // Object.keys(obj) получить в массиве все свйоства обьекта.
+    // Сделать проверку на запись workLog и на наличие  options и id task
+
+    try {
+        const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
+        const date = new Date().toLocaleDateString()
+        const option = req.body.option && Object.keys(req.body.option)[0]
+        const text = `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
+        const dataUser = await User.findById({ "_id": req.body.author })
+        const author = {
+            id: dataUser._id,
+            name: dataUser.username,
+            email: dataUser.email
+        }
+        await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
+
+        data.comments.push({ text, date, author })
+
+        return res.send(data)
+
+    } catch (err) {
+        return res.send({
+            message: err.message || "Error updating Task with id=" + id
+        });
+    }
+}
 
 exports.delete = (req, res) => {
     const id = req.params.id;
