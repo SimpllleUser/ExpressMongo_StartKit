@@ -81,7 +81,7 @@ exports.update = async(req, res) => {
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
         const date = new Date().toLocaleDateString()
-        const spentTime = data.workLog ? req.body.workLog - data.workLog : 0;
+        const spentTime = data.workLog && req.body.workLog - data.workLog;
         const option = req.body.option && Object.keys(req.body.option)[0]
         const text = !req.body.workLog ? `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} ` :
             `Было потрачено ${spentTime}ч на задачу пользователем`
@@ -92,7 +92,9 @@ exports.update = async(req, res) => {
             email: dataUser.email
         }
         await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
-        data[option] = req.body.option[option]
+        if (req.body.option) {
+            data[option] = req.body.option[option]
+        }
         data.comments.push({ text, date, author })
 
         return res.send(data)
@@ -103,6 +105,10 @@ exports.update = async(req, res) => {
         });
     }
 };
+
+
+exports.setWorkLog = (req, res) => {}
+exports.setOptions = (req, res) => {}
 
 exports.delete = (req, res) => {
     const id = req.params.id;
