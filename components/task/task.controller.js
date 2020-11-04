@@ -79,7 +79,7 @@ exports.update = async(req, res) => {
     // Сделать проверку на запись workLog и на наличие  options и id task
 
     try {
-        const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: true })
+        const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
         const date = new Date().toLocaleDateString()
         const spentTime = data.workLog ? req.body.workLog - data.workLog : 0;
         const option = req.body.option && Object.keys(req.body.option)[0]
@@ -91,7 +91,9 @@ exports.update = async(req, res) => {
             name: dataUser.username,
             email: dataUser.email
         }
-        await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: true })
+        await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
+        data[option] = req.body.option[option]
+        data.comments.push({ text, date, author })
 
         return res.send(data)
 
@@ -108,7 +110,8 @@ exports.delete = (req, res) => {
         .then(data => {
             if (!data) {
                 res.status(404).send({
-                    message: `Cannot delete Task with id=${id}. Maybe Task was not found!`,
+                    message: `
+                    Cannot delete Task with id = $ { id }.Maybe Task was not found!`,
                     status: false
                 });
             } else {
