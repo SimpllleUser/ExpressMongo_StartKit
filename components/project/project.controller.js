@@ -7,7 +7,6 @@ const ProjectUser = db.project_user
 exports.creaet = async(req, res) => {
     const { title, description, user_id } = req.body
 
-
     if (!title) {
         return res.status(400).send({ message: "Content can not be empty!" })
     }
