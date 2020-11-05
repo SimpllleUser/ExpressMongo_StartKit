@@ -109,6 +109,7 @@ exports.setWorkLog = async(req, res) => {
             message: "Data to update can not be empty!"
         });
     }
+
     const { workLog } = req.body
     const params = req.body
     try {
@@ -134,7 +135,7 @@ exports.setWorkLog = async(req, res) => {
     }
 
 }
-exports.setOptions = async(req, res) => {
+exports.setOption = async(req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
