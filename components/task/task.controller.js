@@ -173,29 +173,31 @@ exports.setOption = async(req, res) => {
     }
 }
 
-exports.delete = (req, res) => {
-    const id = req.params.id;
-    Task.findByIdAndRemove(id, { useFindAndModify: false })
-        .then(data => {
-            if (!data) {
-                res.status(404).send({
-                    message: `
-                    Cannot delete Task with id = $ { id }.Maybe Task was not found!`,
-                    status: false
-                });
-            } else {
-                res.send({
-                    message: "Task was deleted successfully!",
-                    status: true
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Could not delete Task with id=" + id,
+exports.delete = async(req, res) => {
+    const id = req.body.id;
+    try {
+        const data = await Task.findByIdAndRemove(id, { useFindAndModify: false })
+        if (!data) {
+            return res.status(404).send({
+                message: `
+            Cannot delete Task with id = $ { id }.Maybe Task was not found!`,
                 status: false
             });
+        }
+        return res.send({
+            message: "Task was deleted successfully!",
+            status: true
         });
+
+    } catch (err) {
+        console.log(err)
+
+        res.status(500).send({
+            message: err.message || "Could not delete Task with id=" + id,
+            status: false
+        });
+    }
+
 };
 
 exports.getAllFromGlobalTasks = async(req, res) => {
