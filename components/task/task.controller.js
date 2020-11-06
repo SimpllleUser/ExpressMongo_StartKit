@@ -104,14 +104,16 @@ exports.update = async(req, res) => {
 
 
 exports.setWorkLog = async(req, res) => {
+
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
         });
     }
-
+    const id = req.params.id
     const { workLog } = req.body
     const params = req.body
+
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
         let spentTime = workLog - data.workLog
