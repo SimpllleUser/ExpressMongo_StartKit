@@ -114,7 +114,7 @@ exports.setWorkLog = async(req, res) => {
     const params = req.body
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
-        const spentTime = workLog - data.workLog
+        let spentTime = workLog - data.workLog
         const text = `Было потрачено ${spentTime}ч на задачу пользователем`
         const dataUser = await User.findById({ "_id": req.body.author })
         const author = {
@@ -126,6 +126,7 @@ exports.setWorkLog = async(req, res) => {
         await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
         data.comments.push({ text, date, author })
         data.workLog = workLog
+        spentTime = 0
         return res.send(data)
 
     } catch (err) {
@@ -141,7 +142,7 @@ exports.setOption = async(req, res) => {
             message: "Data to update can not be empty!"
         });
     }
-    const params = req.body.option || req.body
+    const params = req.body.option
     const id = req.params.id;
     // Object.keys(obj) получить в массиве все свйоства обьекта.
     // Сделать проверку на запись workLog и на наличие  options и id task
@@ -160,7 +161,7 @@ exports.setOption = async(req, res) => {
         await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
 
         data.comments.push({ text, date, author })
-
+        data[option] = req.body.option[option]
         return res.send(data)
 
     } catch (err) {
