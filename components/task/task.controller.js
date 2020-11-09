@@ -164,7 +164,7 @@ exports.setOption = async(req, res) => {
 
         data.comments.push({ text, date, author })
         data[option] = req.body.option[option]
-        return res.send(data)
+        return res.send(data);
 
     } catch (err) {
         return res.send({
