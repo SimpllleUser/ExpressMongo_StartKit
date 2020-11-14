@@ -78,3 +78,22 @@ exports.delete = async(req, res) => {
         res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
     }
 }
+
+exports.getProgerss = async(req, res) => {
+
+    const id = req.params.id;
+    if (!id) {
+        return res.status(404).send('Contecnt can`t be empty')
+    }
+
+    try {
+        const tasks = await Task.find({ 'global_taskID': id })
+        const lengthTasks = tasks.length
+        const tasksDone = tasks.filter(task => task.status === 'Done').length
+        const progress = 100 * tasksDone / lengthTasks || 0
+        res.send({ progress: progress });
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ message: err || " Can`t delete task by id=" + task_id })
+    }
+}
