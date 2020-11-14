@@ -20,6 +20,7 @@ exports.create = async(req, res) => {
         estimate: newTask.estimate,
         global_taskID: globalTaskID,
         author_UserID: authorID,
+        responsible_User: newTask.responsible_User,
         date: newTask.date
     });
 
@@ -173,6 +174,40 @@ exports.setOption = async(req, res) => {
     }
 }
 
+exports.setUser = async(req, res) => {
+    if (!req.body) {
+        return res.status(400).send({
+            message: "Data to update can not be empty!"
+        });
+    }
+    const params = req.body.responsibleUser
+    const id = req.params.id;
+    // Object.keys(obj) получить в массиве все свйоства обьекта.
+    // Сделать проверку на запись workLog и на наличие  options и id task
+
+    try {
+        const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
+        const date = new Date().toLocaleDateString()
+        const option = req.body.option && Object.keys(req.body.option)[0]
+        const text = `Был  сменен ответственный пользователь с ${option}: ${data[option]} => ${req.body.option[option]} `
+        const dataUser = await User.findById({ "_id": req.body.author })
+        const author = {
+            id: dataUser._id,
+            name: dataUser.username,
+            email: dataUser.email
+        }
+        await Task.findByIdAndUpdate(id, { $push: { comments: { text, date, author } } }, { useFindAndModify: false })
+
+        data.comments.push({ text, date, author })
+            // data[option] = req.body.option[option]
+        return res.send(data);
+
+    } catch (err) {
+        return res.send({
+            message: err.message || "Error updating Task with id=" + id
+        });
+    }
+}
 exports.delete = async(req, res) => {
     const id = req.body.id;
     try {

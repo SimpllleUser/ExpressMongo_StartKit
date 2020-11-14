@@ -10,8 +10,8 @@ module.exports = mongoose => {
         date: String,
         comments: Array,
         global_taskID: String,
-        author_UserID: String,
-        responsible_UserID: String,
+        author_User: Object,
+        responsible_User: Object,
     }, { timestamps: true });
 
     schema.method("toJSON", function() {

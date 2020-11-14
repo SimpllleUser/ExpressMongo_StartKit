@@ -4,6 +4,8 @@ const db = require("../../models")
 
 const Project = db.project
 const ProjectUser = db.project_user
+const GlobalTask = db.global_task
+const Task = db.tasks
 exports.creaet = async(req, res) => {
     const { title, description, user_id } = req.body
 
@@ -49,13 +51,13 @@ exports.allData = async(req, res) => {
     }
     try {
         const project = await Project.findById(id)
-        let global_tasks = await GlobalTask.find({ '_id': { $in: project.global_tasks } })
-
-        let tasks = []
-        global_tasks.forEach(g_task => tasks = [...tasks, ...g_task.tasks])
-        const allTasks = await Task.find().where('_id', tasks)
-        return res.send({ tasks: allTasks, global_tasks })
+        const global_tasks = await GlobalTask.find({ 'projectID': project.id })
+        const g_tasksID = global_tasks.map(g_task => g_task._id)
+        const allTasks = await Task.find({ 'global_taskID': { $in: g_tasksID } })
+        console.log('allTasks', allTasks)
+        return res.send({ tasks: allTasks })
     } catch (e) {
+        console.log(e)
         return res.send({ message: e.message })
     }
 }
