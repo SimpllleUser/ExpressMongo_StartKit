@@ -54,14 +54,45 @@ exports.allData = async(req, res) => {
         const global_tasks = await GlobalTask.find({ 'projectID': project.id })
         const g_tasksID = global_tasks.map(g_task => g_task._id)
         const allTasks = await Task.find({ 'global_taskID': { $in: g_tasksID } })
-        console.log('allTasks', allTasks)
-        return res.send({ tasks: allTasks })
+
+        // --  STATUS PROJECT
+        const lengthTasks = allTasks.length
+        const tasksDone = allTasks.filter(task => task.status === 'Done').length
+        const projectProgress = 100 * tasksDone / lengthTasks
+            // -- STATUS PROJECT
+
+
+        return res.send({ tasks: allTasks, global_tasks: global_tasks })
     } catch (e) {
         console.log(e)
         return res.send({ message: e.message })
     }
 }
 
+exports.getProgress = async(req, res) => {
+    const id = req.params.id;
+    if (!id) {
+        return res.status(404).send('Contecnt can`t be empty')
+    }
+    try {
+        const project = await Project.findById(id)
+        const global_tasks = await GlobalTask.find({ 'projectID': project.id })
+        const g_tasksID = global_tasks.map(g_task => g_task._id)
+        const allTasks = await Task.find({ 'global_taskID': { $in: g_tasksID } })
+
+        // --  STATUS PROJECT
+        const lengthTasks = allTasks.length
+        const tasksDone = allTasks.filter(task => task.status === 'Done').length
+        const projectProgress = 100 * tasksDone / lengthTasks
+            // -- STATUS PROJECT
+
+
+        return res.send({ projectProgress })
+    } catch (e) {
+        console.log(e)
+        return res.send({ message: e.message })
+    }
+}
 
 
 exports.findOne = async(req, res) => {
