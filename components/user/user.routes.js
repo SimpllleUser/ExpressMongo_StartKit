@@ -24,8 +24,8 @@ module.exports = app => {
     //     "userAuth/admin", [authJwt.verifyToken, authJwt.isAdmin],
     //     user.adminBoard
     // );
-    router.get("/user/all/:project_id", user.getAll)
-    router.post("/user/addUser", user.addUser)
-    router.delete("/user/delete-from-project", user.deleteFromProject)
+    router.get("/user/all/:project_id", [authJwt.verifyToken], user.getAll)
+    router.post("/user/addUser", [authJwt.verifyToken], user.addUser)
+    router.delete("/user/delete-from-project", [authJwt.verifyToken], user.deleteFromProject)
     app.use("/api", router);
 };
