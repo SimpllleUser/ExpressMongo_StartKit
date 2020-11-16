@@ -2,7 +2,7 @@ const { Types } = require('mongoose')
 const db = require("../../models");
 const Task = db.tasks;
 const User = db.user;
-
+const moment = require("moment")
 exports.create = async(req, res) => {
 
     const { globalTaskID, newTask, authorID } = req.body
@@ -76,12 +76,9 @@ exports.update = async(req, res) => {
     }
     const params = req.body.option || req.body
     const id = req.params.id;
-    // Object.keys(obj) получить в массиве все свйоства обьекта.
-    // Сделать проверку на запись workLog и на наличие  options и id task
-
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
-        const date = new Date().toLocaleDateString()
+        const date = moment().format('LLL')
         const option = req.body.option && Object.keys(req.body.option)[0]
         const text = `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
         const dataUser = await User.findById({ "_id": req.body.author })
@@ -152,7 +149,7 @@ exports.setOption = async(req, res) => {
 
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
-        const date = new Date().toLocaleDateString()
+        const date = moment().format('LLL')
         const option = req.body.option && Object.keys(req.body.option)[0]
         const text = `Был сменен ${option}: ${data[option]} => ${req.body.option[option]} `
         const dataUser = await User.findById({ "_id": req.body.author })
@@ -182,12 +179,11 @@ exports.setUser = async(req, res) => {
     }
     const params = req.body.responsibleUser
     const id = req.params.id;
-    // Object.keys(obj) получить в массиве все свйоства обьекта.
-    // Сделать проверку на запись workLog и на наличие  options и id task
+
 
     try {
         const data = await Task.findByIdAndUpdate(id, params, { useFindAndModify: false })
-        const date = new Date().toLocaleDateString()
+        const date = moment().format('LLL')
         const option = req.body.option && Object.keys(req.body.option)[0]
         const text = `Был  сменен ответственный пользователь с ${option}: ${data[option]} => ${req.body.option[option]} `
         const dataUser = await User.findById({ "_id": req.body.author })
@@ -234,6 +230,29 @@ exports.delete = async(req, res) => {
     }
 
 };
+
+exports.setComment = async(req, res) => {
+    const { task_id, comment, author } = req.body
+    try {
+
+        const user = await User.findById({ '_id': author })
+        const newCommetn = {
+            text: comment,
+            date: moment().format('LLL'),
+            author: {
+                id: user._id,
+                name: user.username,
+                email: user.email
+            }
+        }
+
+        const task = await Task.findByIdAndUpdate({ '_id': task_id }, { $push: { comments: newCommetn } })
+        console.log('task', task)
+        return res.send(comment);
+    } catch (err) {
+        return res.send({ err });
+    }
+}
 
 exports.getAllFromGlobalTasks = async(req, res) => {
     const global_tasks = Object.values(req.query)[0];

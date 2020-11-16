@@ -83,11 +83,11 @@ exports.getProgress = async(req, res) => {
         // --  STATUS PROJECT
         const lengthTasks = allTasks.length
         const tasksDone = allTasks.filter(task => task.status === 'Done').length
-        const projectProgress = 100 * tasksDone / lengthTasks
+        const progress = 100 * tasksDone / lengthTasks
             // -- STATUS PROJECT
 
 
-        return res.send({ projectProgress })
+        return res.send({ progress })
     } catch (e) {
         console.log(e)
         return res.send({ message: e.message })
