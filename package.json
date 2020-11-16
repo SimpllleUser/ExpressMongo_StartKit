@@ -4,9 +4,8 @@
     "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
     "main": "server.js",
     "scripts": {
-        "server": "nodemon server",
-        "client": "npm run start --prefix Client",
-        "dev": "concurrently \"npm run server\" \"npm run client\""
+        "dev": "nodemon server",
+        "client": "npm run start --prefix Client"
     },
     "keywords": [
         "nodejs",
