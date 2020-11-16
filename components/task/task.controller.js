@@ -236,7 +236,7 @@ exports.setComment = async(req, res) => {
     try {
 
         const user = await User.findById({ '_id': author })
-        const newCommetn = {
+        const newComment = {
             text: comment,
             date: moment().format('LLL'),
             author: {
@@ -246,9 +246,9 @@ exports.setComment = async(req, res) => {
             }
         }
 
-        const task = await Task.findByIdAndUpdate({ '_id': task_id }, { $push: { comments: newCommetn } })
-        console.log('task', task)
-        return res.send(comment);
+        const task = await Task.findByIdAndUpdate({ '_id': task_id }, { $push: { comments: newComment } }, { useFindAndModify: true })
+        task.comments.push(newComment)
+        return res.send({ task });
     } catch (err) {
         return res.send({ err });
     }
