@@ -13,7 +13,7 @@ module.exports = app => {
 
     // app.get("/userAuth/all", user.allAccess);
 
-    // app.get("/userAuth/user", [authJwt.verifyToken], user.userBoard);
+    // app.get("/userAuth/user", user.userBoard);
 
     // app.get(
     //     "/user/mod", [authJwt.verifyToken, authJwt.isModerator],
@@ -24,8 +24,8 @@ module.exports = app => {
     //     "userAuth/admin", [authJwt.verifyToken, authJwt.isAdmin],
     //     user.adminBoard
     // );
-    router.get("/user/all/:project_id", [authJwt.verifyToken], user.getAll)
-    router.post("/user/addUser", [authJwt.verifyToken], user.addUser)
-    router.delete("/user/delete-from-project", [authJwt.verifyToken], user.deleteFromProject)
+    router.get("/user/all/:project_id", user.getAll)
+    router.post("/user/addUser", user.addUser)
+    router.delete("/user/delete-from-project", user.deleteFromProject)
     app.use("/api", router);
 };
