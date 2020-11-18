@@ -1,4 +1,5 @@
 const project = require("./project.controller")
+const authJwt = require("../../middlewares/authJwt")
 
 module.exports = app => {
     // app.use(function(req, res, next) {
@@ -18,6 +19,7 @@ module.exports = app => {
     router.get('/users/:id', project.getProjectsUser)
     router.put('/:id', project.update)
     router.delete('/:id', project.delete)
+
 
     app.use("/api/project", router);
 }
